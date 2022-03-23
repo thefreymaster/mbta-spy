@@ -1,26 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+// @ts-ignore
+import React from "react";
+import "./App.css";
+import { LiveMap } from "./components/LiveMap";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { AppShell, Header, Navbar } from "@mantine/core";
 
-function App() {
+const queryClient = new QueryClient();
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <AppShell
+        sx={{ padding: "0px !important" }}
+        header={
+          <Header
+            style={{
+              position: "fixed",
+              top: 0,
+              backdropFilter: "blur(4px)",
+              backgroundColor: "transparent",
+              display: "flex",
+              alignItems: "center",
+            }}
+            height={60}
+            p="xs"
+            pl="lg"
+          >
+            MBTA Tracker
+          </Header>
+        }
+      >
+        <LiveMap />
+      </AppShell>
+    </QueryClientProvider>
   );
-}
+};
 
 export default App;

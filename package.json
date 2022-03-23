@@ -3,6 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@googlemaps/polyline-codec": "^1.0.22",
+    "@mantine/core": "^4.0.7",
+    "@mantine/dates": "^4.0.7",
+    "@mantine/form": "^4.0.7",
+    "@mantine/hooks": "^4.0.7",
+    "@mantine/modals": "^4.0.7",
+    "@mantine/notifications": "^4.0.7",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.2.1",
@@ -10,9 +17,21 @@
     "@types/node": "^16.7.13",
     "@types/react": "^17.0.20",
     "@types/react-dom": "^17.0.9",
+    "axios": "^0.26.1",
+    "dayjs": "^1.11.0",
+    "dotenv": "^16.0.0",
+    "eventsource": "^2.0.0",
+    "express": "^4.17.3",
+    "mapbox-gl": "^2.7.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-google-maps": "^9.4.5",
+    "react-icons": "^4.3.1",
+    "react-map-gl": "^7.0.10",
+    "react-query": "^3.34.16",
     "react-scripts": "5.0.0",
+    "socket.io": "^4.4.1",
+    "socket.io-client": "^4.4.1",
     "typescript": "^4.4.2",
     "web-vitals": "^2.1.0"
   },
@@ -30,14 +49,15 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+      "defaults",
+      "not ie 11"
     ],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "devDependencies": {},
+  "proxy": "http://localhost:5500"
 }
