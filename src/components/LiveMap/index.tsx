@@ -8,7 +8,7 @@ import LiveMarker from "../LiveMarker/index";
 import Pin from "../Pin";
 import { Center, Loader } from "@mantine/core";
 import { VehicleType } from "../VehicleType";
-import { LineShapes } from '../LineShapes/index';
+import { LineShapes } from "../LineShapes/index";
 import { LineDrawer } from "../LineDrawer";
 
 const DAY_MAP = "mapbox://styles/thefreymaster/ckke447ga0wla19k1cqupmrrz";
@@ -68,7 +68,7 @@ export const LiveMap = () => {
   }
 
   return (
-    <div>
+    <>
       <LineDrawer lineRoute={lineRoute} setLineRoute={setLineRoute} />
       <Map
         mapboxAccessToken={process.env.REACT_APP_MAP_BOX_TOKEN}
@@ -94,6 +94,6 @@ export const LiveMap = () => {
           />
         ))}
       </Map>
-    </div>
+    </>
   );
 };

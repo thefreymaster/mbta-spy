@@ -3,7 +3,8 @@ import React from "react";
 import "./App.css";
 import { LiveMap } from "./components/LiveMap";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { AppShell, Header, Navbar } from "@mantine/core";
+import { AppShell, Header, Space, Title } from "@mantine/core";
+import { IoTrain } from "react-icons/io5";
 
 const queryClient = new QueryClient();
 
@@ -26,7 +27,9 @@ const App = () => {
             p="xs"
             pl="lg"
           >
-            MBTA Tracker
+            <IoTrain />
+            <Space w="sm" />
+            <Title order={6}>Boston Transit Tracker</Title>
           </Header>
         }
       >

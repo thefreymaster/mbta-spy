@@ -12,7 +12,7 @@ export const LineDrawer = (props: {
   const [start, end] = route?.attributes?.direction_destinations;
   const [outbound, inbound] = route?.attributes?.direction_names;
 
-  console.log(vehicle);
+  console.log({ route, vehicle });
   return (
     <Drawer
       opened={!!props.lineRoute}
@@ -33,11 +33,7 @@ export const LineDrawer = (props: {
         {route.attributes.description}
       </Badge>
       <Space h="md" />
-      <Stepper
-        active={-1}
-        breakpoint="sm"
-        orientation="vertical"
-      >
+      <Stepper active={-1} breakpoint="sm" orientation="vertical">
         <Stepper.Step
           icon={<BsChevronUp />}
           label={end}
