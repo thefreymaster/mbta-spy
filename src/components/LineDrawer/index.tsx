@@ -1,5 +1,6 @@
 import { Badge, Drawer, Space, Stepper } from "@mantine/core";
 import { BsChevronUp, BsChevronDown } from "react-icons/bs";
+import { isDesktop } from 'react-device-detect';
 
 export const LineDrawer = (props: {
   lineRoute?: any;
@@ -15,7 +16,7 @@ export const LineDrawer = (props: {
   console.log({ route, vehicle });
   return (
     <Drawer
-      opened={!!props.lineRoute}
+      opened={!!props.lineRoute && isDesktop}
       onClose={() => props.setLineRoute(false)}
       title={`${props?.lineRoute?.route?.attributes?.long_name}`}
       padding="xl"
