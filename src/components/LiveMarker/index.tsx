@@ -55,9 +55,8 @@ const LiveMarker = (props: {
           alignItems: "center",
           justifyContent: "center",
           borderRadius: 100,
-          opacity: 0.8,
-          width: 20,
-          height: 20,
+          width: 18,
+          height: 18,
           boxShadow: theme.shadows.lg,
         })}
       >
