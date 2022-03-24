@@ -3,6 +3,8 @@ import { io } from "socket.io-client";
 import { Marker } from "react-map-gl";
 import { MdOutlineDirectionsTransitFilled } from "react-icons/md";
 import "./live-marker.css";
+import { Box } from "@mantine/core";
+import { isMobile } from "react-device-detect";
 
 const socket = io(window.location.origin);
 
@@ -41,24 +43,26 @@ const LiveMarker = (props: {
           isAnimating && !props.isDragging && "transform 200ms ease-in-out",
       }}
     >
-      <div
+      <Box
         className="marker"
         onClick={() => {
           console.log({ vehicle, route: props.route });
           props.setLineRoute({ route: props.route, vehicle: vehicle });
         }}
-        style={{
+        sx={(theme) => ({
           backgroundColor: `#${props.route?.attributes?.color}`,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           borderRadius: 100,
-          width: 15,
-          height: 15,
-        }}
+          opacity: 0.8,
+          width: 20,
+          height: 20,
+          boxShadow: theme.shadows.lg,
+        })}
       >
         <MdOutlineDirectionsTransitFilled color="white" />
-      </div>
+      </Box>
     </Marker>
   );
 };
