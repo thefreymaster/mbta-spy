@@ -7,13 +7,36 @@ import LiveMarker from "../LiveMarker/index";
 import { Center, Loader } from "@mantine/core";
 import { LineShapes } from "../LineShapes/index";
 import { LineDrawer } from "../LineDrawer";
+import { VehicleType } from "../VehicleType/index";
 
 const DEFAULT_LATITUDE = 42.35698;
 const DEFAULT_LONGITUDE = -71.06388;
 
-export const LiveMap = () => {
-  const [isDragging, setIsDragging] = React.useState(false);
+const MapContent = (props: { isDragging: boolean }) => {
   const [lineRoute, setLineRoute]: any = React.useState();
+  const [vehicleType, setVehicleType] = React.useState("");
+
+  const { isLoading, isError, error, data } = useQuery(
+    ["vehicles", vehicleType],
+    () =>
+      fetch(`/api/vehicles/${vehicleType}`).then((res) => {
+        return res.json();
+      }),
+    {
+      retry: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const getRouteIds = () => {
+    const ids = data?.vehicles?.reduce((accumulator: string, vehicle: any) => {
+      accumulator += `${vehicle?.relationships?.route?.data?.id},`;
+      return accumulator;
+    }, "");
+    return ids;
+  };
 
   const {
     isLoading: isLoadingRoutes,
@@ -26,20 +49,7 @@ export const LiveMap = () => {
         return res.json();
       }),
     {
-      retry: false,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-    }
-  );
-
-  const { isLoading, isError, error, data } = useQuery(
-    "vehicles",
-    () =>
-      fetch("/api/vehicles").then((res) => {
-        return res.json();
-      }),
-    {
+      enabled: !!data,
       retry: false,
       refetchOnMount: false,
       refetchOnReconnect: false,
@@ -58,10 +68,39 @@ export const LiveMap = () => {
     console.log(error);
     return <>Error</>;
   }
-
   return (
     <>
       <LineDrawer lineRoute={lineRoute} setLineRoute={setLineRoute} />
+      {/* <VehicleType vehicleType={vehicleType} setVehicleType={setVehicleType} /> */}
+      <LineShapes
+        vehicleType={vehicleType}
+        shapeIds={getRouteIds()}
+        lineRoute={lineRoute}
+        setLineRoute={setLineRoute}
+        dataRoutes={dataRoutes}
+      />
+      {data.vehicles.map((vehicle: any) => {
+        // console.log(vehicle)
+        return (
+          <LiveMarker
+            route={dataRoutes.routes.find(
+              (r: any) => r.id === vehicle.relationships.route.data.id
+            )}
+            isDragging={props.isDragging}
+            vehicle={vehicle}
+            setLineRoute={setLineRoute}
+          />
+        );
+      })}
+    </>
+  );
+};
+
+export const LiveMap = () => {
+  const [isDragging, setIsDragging] = React.useState(false);
+
+  return (
+    <>
       <Map
         mapboxAccessToken={process.env.REACT_APP_MAP_BOX_TOKEN}
         initialViewState={{
@@ -71,20 +110,10 @@ export const LiveMap = () => {
         }}
         style={{ width: "100vw", height: "100vh" }}
         mapStyle="mapbox://styles/mapbox/streets-v9"
-        onDragStart={() => setIsDragging(true)}
-        onDragEnd={() => setIsDragging(false)}
+        // onDragStart={() => setIsDragging(true)}
+        // onDragEnd={() => setIsDragging(false)}
       >
-        <LineShapes lineRoute={lineRoute} setLineRoute={setLineRoute} />
-        {data.vehicles.map((vehicle: any) => (
-          <LiveMarker
-            route={dataRoutes.routes.find(
-              (r: any) => r.id === vehicle.relationships.route.data.id
-            )}
-            isDragging={isDragging}
-            vehicle={vehicle}
-            setLineRoute={setLineRoute}
-          />
-        ))}
+        <MapContent isDragging={isDragging} />
       </Map>
     </>
   );

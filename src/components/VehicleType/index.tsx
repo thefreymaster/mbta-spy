@@ -66,14 +66,21 @@ const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
   }
 );
 
-export const VehicleType = () => {
+export const VehicleType = (props: {
+  setVehicleType: any;
+  vehicleType: string;
+}) => {
   return (
     <Select
-      sx={{ position: "absolute", top: 20, left: 20, zIndex: 100 }}
-      placeholder="Vehicle Type"
+      clearable
+      allowDeselect
+      sx={{ position: "absolute", top: 75, left: 20, zIndex: 100 }}
+      placeholder="Line Type"
       itemComponent={SelectItem}
+      value={props.vehicleType}
+      onChange={props.setVehicleType}
       data={data}
-      searchable
+      searchable={false}
       maxDropdownHeight={400}
       nothingFound="Nobody here"
       filter={(value, item: any) =>

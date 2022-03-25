@@ -1,5 +1,5 @@
 const express = require("express");
-require('dotenv').config()
+require("dotenv").config();
 const { createServer } = require("http");
 const axios = require("axios");
 const path = require("path");
@@ -55,7 +55,7 @@ app.get("/api/shapes/:shapeId", async (req, res) => {
 app.get("/api/vehicles/:vehicle_id", async (req, res) => {
   const { vehicle_id } = req.params;
   const response = await axios.get(
-    `https://api-v3.mbta.com/vehicles/${vehicle_id}?api_key=${process.env.MBTA_TOKEN}`
+    `https://api-v3.mbta.com/vehicles?filter%5Broute_type%5D=${vehicle_id}&api_key=${process.env.MBTA_TOKEN}`
   );
   const vehicles = response.data;
   return res.send({ vehicles: vehicles.data });

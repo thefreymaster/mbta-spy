@@ -1,21 +1,74 @@
 import React from "react";
 import { io } from "socket.io-client";
 import { Marker } from "react-map-gl";
-import { MdOutlineDirectionsTransitFilled } from "react-icons/md";
+import {
+  MdOutlineDirectionsTransitFilled,
+  MdTram,
+  MdDirectionsSubway,
+  MdDirectionsRailway,
+  MdOutlineDirectionsBus,
+} from "react-icons/md";
 import "./live-marker.css";
 import { Box } from "@mantine/core";
-import { isMobile } from "react-device-detect";
+import { Route } from "../../interfaces";
 
 const socket = io(window.location.origin);
+
+export const TransitIcon = (props: {
+  value: number;
+  color?: string;
+  style?: any;
+  onClick?: any;
+}) => {
+  const transitTypes = new Map();
+  transitTypes.set(
+    0,
+    <MdTram
+      className="marker"
+      onClick={props.onClick}
+      color={props.color ?? "white"}
+      style={{ ...props.style }}
+    />
+  );
+  transitTypes.set(
+    1,
+    <MdDirectionsSubway
+      className="marker"
+      onClick={props.onClick}
+      color={props.color ?? "white"}
+      style={{ ...props.style }}
+    />
+  );
+  transitTypes.set(
+    2,
+    <MdDirectionsRailway
+      className="marker"
+      onClick={props.onClick}
+      color={props.color ?? "white"}
+      style={{ ...props.style }}
+    />
+  );
+  transitTypes.set(
+    3,
+    <MdOutlineDirectionsBus
+      className="marker"
+      onClick={props.onClick}
+      color={props.color ?? "white"}
+      style={{ ...props.style }}
+    />
+  );
+
+  return <>{transitTypes.get(props.value) ?? transitTypes.get(0)}</>;
+};
 
 const LiveMarker = (props: {
   vehicle: any;
   isDragging: boolean;
-  route: any;
+  route: Route;
   setLineRoute(s: any): void;
 }) => {
   const [vehicle, setVehicle] = React.useState(props.vehicle);
-  const [isAnimating, setIsAnimating] = React.useState(false);
+  const [isAnimating, setIsAnimating]: any = React.useState();
 
   React.useEffect(() => {
     socket.on(props.vehicle.id, ({ data }: { data: any }) => {
@@ -43,25 +96,23 @@ const LiveMarker = (props: {
           isAnimating && !props.isDragging && "transform 200ms ease-in-out",
       }}
     >
-      <Box
-        className="marker"
-        onClick={() => {
-          console.log({ vehicle, route: props.route });
-          props.setLineRoute({ route: props.route, vehicle: vehicle });
-        }}
-        sx={(theme) => ({
+      <TransitIcon
+        value={props.route?.attributes?.type}
+        style={{
           backgroundColor: `#${props.route?.attributes?.color}`,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           borderRadius: 100,
-          width: 18,
-          height: 18,
-          boxShadow: theme.shadows.lg,
-        })}
-      >
-        <MdOutlineDirectionsTransitFilled color="white" />
-      </Box>
+          width: 15,
+          height: 15,
+          padding: 2
+        }}
+        onClick={() => {
+          console.log({ vehicle, route: props.route });
+          props.setLineRoute({ route: props.route, vehicle: vehicle });
+        }}
+      />
     </Marker>
   );
 };
