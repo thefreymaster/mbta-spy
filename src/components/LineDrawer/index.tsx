@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Avatar,
   Badge,
   Box,
   Center,
@@ -41,15 +42,15 @@ const DrawerTitle = (props: {
           alignItems: "center",
         })}
       >
-        <TransitIcon
-          value={props?.type}
-          color={props.color}
-          style={{
-            border: "3px solid",
-            borderRadius: "100px",
-            padding: "5px",
-          }}
-        />
+        <Avatar radius="xl">
+          <TransitIcon
+            value={props?.type}
+            color={props.color}
+            containerStyle={{
+              border: `3px solid #${props.color}`,
+            }}
+          />
+        </Avatar>
       </Box>
       <Space w={5} />
       <Box
@@ -79,6 +80,9 @@ const DrawerTitle = (props: {
 };
 
 const getCurrentStopIndex = (currentStopId: string, stops: any[]) => {
+  if (!stops) {
+    return -1;
+  }
   let index;
   stops?.map((stop: any, stopIndex: number) =>
     stop?.relationships?.child_stops?.data?.map((childStop: any) => {
@@ -96,24 +100,21 @@ export const LineDrawer = (props: {
 }) => {
   const history: any = useHistory();
   const location: any = useLocation();
-  const [vehicle, setVehicle]: any = React.useState(location?.state?.vehicle);
+  // const [vehicle, setVehicle]: any = React.useState();
+
   const params: { transit_type: string; route_id: string; transit_id: string } =
     useParams();
 
-  React.useEffect(() => {
-    socket.on(params.transit_id, ({ data }: { data: any }) => {
-      const parsed = JSON.parse(data);
-      setVehicle(parsed);
-      console.log(parsed);
-      // if (parsed.id === params.transit_id) {
-      //   setVehicle(parsed);
-      // }
-    });
+  // React.useEffect(() => {
+  //   socket.on(params.transit_id, ({ data }: { data: any }) => {
+  //     const parsed = JSON.parse(data);
+  //     setVehicle(parsed);
+  //   });
 
-    return function cleanUp() {
-      socket.disconnect();
-    };
-  }, [params.transit_id]);
+  //   return function cleanUp() {
+  //     socket.disconnect();
+  //   };
+  // }, [params.transit_id]);
 
   const { isLoading, data } = useQuery(
     ["stops", params.route_id],
@@ -135,8 +136,6 @@ export const LineDrawer = (props: {
       location?.state?.vehicle?.relationships?.stop?.data?.id,
       data?.stops
     ) ?? 0;
-
-  //add socket listener to know when stop changes
 
   return (
     <Drawer

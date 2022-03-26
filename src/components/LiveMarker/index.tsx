@@ -8,7 +8,7 @@ import {
   MdOutlineDirectionsBus,
 } from "react-icons/md";
 import "./live-marker.css";
-import { Box } from "@mantine/core";
+import { ActionIcon, Box } from "@mantine/core";
 import { Route } from "../../interfaces";
 import { Link, useHistory, useParams } from "react-router-dom";
 
@@ -18,44 +18,85 @@ export const TransitIcon = (props: {
   value: number;
   color?: string;
   style?: any;
+  containerStyle?: any;
   onClick?: any;
 }) => {
   const transitTypes = new Map();
   transitTypes.set(
     0,
-    <MdTram
-      className="marker"
+    <ActionIcon
+      {...props.containerStyle}
+      variant="hover"
+      sx={(theme) => ({
+        borderRadius: 100,
+        "&:hover": {
+          boxShadow: theme.shadows.lg,
+        },
+      })}
       onClick={props.onClick}
-      color={props.color ?? "white"}
-      style={{ ...props.style }}
-    />
+    >
+      <MdTram color={props.color ?? "white"} style={{ ...props.style }} />
+    </ActionIcon>
   );
   transitTypes.set(
     1,
-    <MdDirectionsSubway
-      className="marker"
+    <ActionIcon
+      {...props.containerStyle}
+      variant="hover"
+      sx={(theme) => ({
+        borderRadius: 100,
+        "&:hover": {
+          boxShadow: theme.shadows.lg,
+        },
+      })}
       onClick={props.onClick}
-      color={props.color ?? "white"}
-      style={{ ...props.style }}
-    />
+    >
+      <MdDirectionsSubway
+        className="marker"
+        color={props.color ?? "white"}
+        style={{ ...props.style }}
+      />
+    </ActionIcon>
   );
   transitTypes.set(
     2,
-    <MdDirectionsRailway
-      className="marker"
+    <ActionIcon
+      {...props.containerStyle}
+      variant="hover"
+      sx={(theme) => ({
+        borderRadius: 100,
+        "&:hover": {
+          boxShadow: theme.shadows.lg,
+        },
+      })}
       onClick={props.onClick}
-      color={props.color ?? "white"}
-      style={{ ...props.style }}
-    />
+    >
+      <MdDirectionsRailway
+        className="marker"
+        style={{ ...props.style }}
+        color={props.color ?? "white"}
+      />
+    </ActionIcon>
   );
   transitTypes.set(
     3,
-    <MdOutlineDirectionsBus
-      className="marker"
+    <ActionIcon
+      {...props.containerStyle}
+      variant="hover"
+      sx={(theme) => ({
+        borderRadius: 100,
+        "&:hover": {
+          boxShadow: theme.shadows.lg,
+        },
+      })}
       onClick={props.onClick}
-      color={props.color ?? "white"}
-      style={{ ...props.style }}
-    />
+    >
+      <MdOutlineDirectionsBus
+        className="marker"
+        style={{ ...props.style }}
+        color={props.color ?? "white"}
+      />
+    </ActionIcon>
   );
 
   return <>{transitTypes.get(props.value) ?? transitTypes.get(0)}</>;
