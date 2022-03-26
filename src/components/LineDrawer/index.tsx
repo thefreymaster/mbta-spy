@@ -2,7 +2,9 @@ import React from "react";
 import {
   Badge,
   Box,
+  Center,
   Drawer,
+  Loader,
   Space,
   Text,
   Timeline,
@@ -113,7 +115,7 @@ export const LineDrawer = (props: {
     };
   }, [params.transit_id]);
 
-  const { data } = useQuery(
+  const { isLoading, data } = useQuery(
     ["stops", params.route_id],
     () =>
       fetch(`/api/stops/${params?.route_id}`).then((res) => {
@@ -127,10 +129,6 @@ export const LineDrawer = (props: {
       refetchOnWindowFocus: false,
     }
   );
-
-  if (!props.lineRoute) {
-    return null;
-  }
 
   const currentStopIndex =
     getCurrentStopIndex(
@@ -159,46 +157,44 @@ export const LineDrawer = (props: {
       sx={() => ({ overflow: "scroll" })}
       className="drawer"
     >
-      <Badge
-        fullWidth
-        style={{
-          backgroundColor: `#${location?.state?.route?.attributes?.color}`,
-          color: "white",
-        }}
-      >
-        {location?.state?.route.attributes.description}
-      </Badge>
-      <Space h="md" />
-      <Timeline active={currentStopIndex} bulletSize={24} lineWidth={2}>
-        {data?.stops?.map((stop: any, index: number) => {
-          return (
-            <Timeline.Item
-              lineVariant={index === currentStopIndex ? "dashed" : "solid"}
-              color="gray"
-              bullet={
-                <TransitIcon value={location?.state?.route?.attributes?.type} />
-              }
-              title={stop?.attributes?.name}
-            >
-              <Text size="xs" color="dimmed">
-                {stop?.attributes?.address}
-              </Text>
-            </Timeline.Item>
-          );
-        })}
-      </Timeline>
-      {/* <Stepper active={-1} breakpoint="sm" orientation="vertical">
-        <Stepper.Step
-          icon={<BsChevronUp />}
-          label={end}
-          description={inbound}
-        ></Stepper.Step>
-        <Stepper.Step
-          icon={<BsChevronDown />}
-          label={start}
-          description={outbound}
-        ></Stepper.Step>
-      </Stepper> */}
+      {isLoading ? (
+        <Center sx={() => ({ minHeight: "100%" })}>
+          <Loader color="gray" />
+        </Center>
+      ) : (
+        <>
+          <Badge
+            fullWidth
+            style={{
+              backgroundColor: `#${location?.state?.route?.attributes?.color}`,
+              color: "white",
+            }}
+          >
+            {location?.state?.route.attributes.description}
+          </Badge>
+          <Space h="md" />
+          <Timeline active={currentStopIndex} bulletSize={24} lineWidth={2}>
+            {data?.stops?.map((stop: any, index: number) => {
+              return (
+                <Timeline.Item
+                  lineVariant={index === currentStopIndex ? "dashed" : "solid"}
+                  color="gray"
+                  bullet={
+                    <TransitIcon
+                      value={location?.state?.route?.attributes?.type}
+                    />
+                  }
+                  title={stop?.attributes?.name}
+                >
+                  <Text size="xs" color="dimmed">
+                    {stop?.attributes?.address}
+                  </Text>
+                </Timeline.Item>
+              );
+            })}
+          </Timeline>
+        </>
+      )}
     </Drawer>
   );
 };
