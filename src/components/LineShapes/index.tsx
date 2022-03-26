@@ -1,8 +1,14 @@
 import { decode } from "@googlemaps/polyline-codec";
-import { Drawer } from "@mantine/core";
 import React from "react";
 import { Layer, Source } from "react-map-gl";
 import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
+
+const transitTypeColors = new Map();
+transitTypeColors.set("0", "00843d");
+transitTypeColors.set("1", "da291c");
+transitTypeColors.set("2", "80276c");
+transitTypeColors.set("3", "ffc72c");
 
 const getCoordinates = (polyline: string) => {
   const parsedPolyline = decode(polyline);
@@ -19,14 +25,20 @@ export const LineShapes = (props: {
   vehicleType: string;
   dataRoutes: any;
 }) => {
+  const params: { transit_type: string; route_id: string; transit_id: string } =
+    useParams();
   const { isLoading, data } = useQuery(
-    ["line-polyline", props.vehicleType || props.lineRoute?.route?.id],
+    ["line-polyline", params.transit_type || params.route_id],
     () =>
-      fetch(`/api/shapes/${!props.vehicleType ? props.lineRoute?.route?.id : props.shapeIds}`).then((res) => {
+      fetch(
+        `/api/shapes/${
+          params.transit_type && params.transit_id ? params.route_id : props.shapeIds
+        }`
+      ).then((res) => {
         return res.json();
       }),
     {
-      // enabled: !!props.vehicleType || !!props.lineRoute?.route?.id,
+      enabled: !!params.transit_type || !!params.transit_id,
       retry: false,
       refetchOnMount: false,
       refetchOnReconnect: false,
@@ -34,37 +46,44 @@ export const LineShapes = (props: {
     }
   );
 
-  if (isLoading) {
-    return null;
-  }
-  return (
-    <>
-      {data?.shapes?.map((p: any) => {
-        return (
-          <Source
-            id={`polyline-${p?.id}`}
-            key={`polyline-${p?.id}`}
-            type="geojson"
-            data={{
-              type: "Feature",
-              properties: {},
-              geometry: {
-                type: "LineString",
-                coordinates: getCoordinates(p?.attributes?.polyline),
-              },
-            }}
-          >
-            <Layer
-              id={`line-${p?.id}`}
-              type="line"
-              paint={{
-                "line-width": 2,
-                "line-color": `#${props?.lineRoute?.route?.attributes?.color || 'da291c'}`,
+  const memorizedShapes = React.useMemo(() => {
+    if (isLoading) {
+      return null;
+    }
+    return (
+      <>
+        {data?.shapes?.map((p: any) => {
+          return (
+            <Source
+              id={`polyline-${p?.id}`}
+              key={`polyline-${p?.id}`}
+              type="geojson"
+              data={{
+                type: "Feature",
+                properties: {},
+                geometry: {
+                  type: "LineString",
+                  coordinates: getCoordinates(p?.attributes?.polyline),
+                },
               }}
-            />
-          </Source>
-        );
-      })}
-    </>
-  );
+            >
+              <Layer
+                id={`line-${p?.id}`}
+                type="line"
+                paint={{
+                  "line-width": 2,
+                  "line-color": `#${
+                    params.transit_type
+                      ? transitTypeColors.get(params.transit_type)
+                      : props?.lineRoute?.route?.attributes?.color
+                  }`,
+                }}
+              />
+            </Source>
+          );
+        })}
+      </>
+    );
+  }, [isLoading, data?.shapes?.length, params.transit_type]);
+  return <>{memorizedShapes}</>;
 };

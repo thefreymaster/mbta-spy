@@ -5,6 +5,7 @@ import { LiveMap } from "./components/LiveMap";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { AppShell, Box, Header, Space, Title } from "@mantine/core";
 import { IoTrain } from "react-icons/io5";
+import Router from "./routes";
 
 const queryClient = new QueryClient();
 
@@ -40,7 +41,7 @@ const App = () => {
           </Header>
         }
       >
-        <LiveMap />
+        <Router />
       </AppShell>
     </QueryClientProvider>
   );

@@ -61,6 +61,16 @@ app.get("/api/vehicles/:vehicle_id", async (req, res) => {
   return res.send({ vehicles: vehicles.data });
 });
 
+app.get("/api/stops/:stop_id", async (req, res) => {
+  const { stop_id } = req.params;
+
+  const response = await axios.get(
+    `https://api-v3.mbta.com/stops?include=child_stops&filter%5Broute%5D=${stop_id}&api_key=${process.env.MBTA_TOKEN}`
+  );
+  const stops = response.data;
+  return res.send({ stops: stops.data });
+});
+
 app.get("/*", function (request, response) {
   response.sendFile(path.resolve(__dirname, "build/index.html"));
 });

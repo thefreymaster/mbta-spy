@@ -8,6 +8,7 @@ import { Center, Loader } from "@mantine/core";
 import { LineShapes } from "../LineShapes/index";
 import { LineDrawer } from "../LineDrawer";
 import { VehicleType } from "../VehicleType/index";
+import { useParams } from "react-router-dom";
 
 const DEFAULT_LATITUDE = 42.35698;
 const DEFAULT_LONGITUDE = -71.06388;
@@ -15,11 +16,12 @@ const DEFAULT_LONGITUDE = -71.06388;
 const MapContent = (props: { isDragging: boolean }) => {
   const [lineRoute, setLineRoute]: any = React.useState();
   const [vehicleType, setVehicleType] = React.useState("");
+  const params: { transit_type: string } = useParams();
 
   const { isLoading, isError, error, data } = useQuery(
-    ["vehicles", vehicleType],
+    ["vehicles", params?.transit_type],
     () =>
-      fetch(`/api/vehicles/${vehicleType}`).then((res) => {
+      fetch(`/api/vehicles/${params?.transit_type}`).then((res) => {
         return res.json();
       }),
     {
@@ -71,7 +73,7 @@ const MapContent = (props: { isDragging: boolean }) => {
   return (
     <>
       <LineDrawer lineRoute={lineRoute} setLineRoute={setLineRoute} />
-      {/* <VehicleType vehicleType={vehicleType} setVehicleType={setVehicleType} /> */}
+      <VehicleType vehicleType={vehicleType} setVehicleType={setVehicleType} />
       <LineShapes
         vehicleType={vehicleType}
         shapeIds={getRouteIds()}
@@ -82,14 +84,16 @@ const MapContent = (props: { isDragging: boolean }) => {
       {data.vehicles.map((vehicle: any) => {
         // console.log(vehicle)
         return (
-          <LiveMarker
-            route={dataRoutes.routes.find(
-              (r: any) => r.id === vehicle.relationships.route.data.id
-            )}
-            isDragging={props.isDragging}
-            vehicle={vehicle}
-            setLineRoute={setLineRoute}
-          />
+          <div key={`marker-${vehicle.id}`}>
+            <LiveMarker
+              route={dataRoutes.routes.find(
+                (r: any) => r.id === vehicle.relationships.route.data.id
+              )}
+              isDragging={props.isDragging}
+              vehicle={vehicle}
+              setLineRoute={setLineRoute}
+            />
+          </div>
         );
       })}
     </>
@@ -102,6 +106,7 @@ export const LiveMap = () => {
   return (
     <>
       <Map
+        reuseMaps
         mapboxAccessToken={process.env.REACT_APP_MAP_BOX_TOKEN}
         initialViewState={{
           longitude: DEFAULT_LONGITUDE,
@@ -110,8 +115,6 @@ export const LiveMap = () => {
         }}
         style={{ width: "100vw", height: "100vh" }}
         mapStyle="mapbox://styles/mapbox/streets-v9"
-        // onDragStart={() => setIsDragging(true)}
-        // onDragEnd={() => setIsDragging(false)}
       >
         <MapContent isDragging={isDragging} />
       </Map>

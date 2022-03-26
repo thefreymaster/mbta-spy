@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { io } from "socket.io-client";
-import { Marker } from "react-map-gl";
+import { Marker, useMap } from "react-map-gl";
 import {
-  MdOutlineDirectionsTransitFilled,
   MdTram,
   MdDirectionsSubway,
   MdDirectionsRailway,
@@ -11,6 +10,7 @@ import {
 import "./live-marker.css";
 import { Box } from "@mantine/core";
 import { Route } from "../../interfaces";
+import { Link, useHistory, useParams } from "react-router-dom";
 
 const socket = io(window.location.origin);
 
@@ -67,8 +67,12 @@ const LiveMarker = (props: {
   route: Route;
   setLineRoute(s: any): void;
 }) => {
+  const { current: map } = useMap();
+  const history = useHistory();
+
   const [vehicle, setVehicle] = React.useState(props.vehicle);
   const [isAnimating, setIsAnimating]: any = React.useState();
+  const params: { transit_type: string } = useParams();
 
   React.useEffect(() => {
     socket.on(props.vehicle.id, ({ data }: { data: any }) => {
@@ -81,40 +85,53 @@ const LiveMarker = (props: {
         }, 200);
       }
     });
-  }, []);
 
-  return (
-    <Marker
-      key={`marker-${vehicle.id}`}
-      longitude={vehicle.attributes.longitude}
-      latitude={vehicle.attributes.latitude}
-      anchor="bottom"
-      style={{
-        willChange: "transform",
-        // @ts-ignore
-        transition:
-          isAnimating && !props.isDragging && "transform 200ms ease-in-out",
-      }}
-    >
-      <TransitIcon
-        value={props.route?.attributes?.type}
+    // return function cleanUp() {
+    //   socket.disconnect();
+    // };
+  }, [params.transit_type, props.vehicle.id]);
+
+  const memorizedMarker = useMemo(() => {
+    return (
+      <Marker
+        longitude={vehicle.attributes.longitude}
+        latitude={vehicle.attributes.latitude}
+        anchor="bottom"
         style={{
-          backgroundColor: `#${props.route?.attributes?.color}`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          borderRadius: 100,
-          width: 15,
-          height: 15,
-          padding: 2
+          willChange: "transform",
+          // @ts-ignore
+          transition:
+            isAnimating && !map?.isMoving() && "transform 200ms ease-in-out",
         }}
-        onClick={() => {
-          console.log({ vehicle, route: props.route });
-          props.setLineRoute({ route: props.route, vehicle: vehicle });
-        }}
-      />
-    </Marker>
-  );
+      >
+        <Link
+          to={{
+            pathname: `/${props?.route?.attributes?.type}/${props?.route?.id}/${props.vehicle.id}`,
+            state: { route: props.route, vehicle: vehicle },
+          }}
+        >
+          <TransitIcon
+            value={props.route?.attributes?.type}
+            style={{
+              backgroundColor: `#${props.route?.attributes?.color}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 100,
+              width: 15,
+              height: 15,
+              padding: 2,
+            }}
+            onClick={() => {
+              console.log({ vehicle, route: props.route });
+              props.setLineRoute({ route: props.route, vehicle: vehicle });
+            }}
+          />
+        </Link>
+      </Marker>
+    );
+  }, [vehicle.attributes.longitude, vehicle.attributes.latitude, isAnimating]);
+  return <>{memorizedMarker}</>;
 };
 
-export default React.memo(LiveMarker);
+export default LiveMarker;

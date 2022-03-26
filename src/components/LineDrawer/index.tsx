@@ -1,9 +1,29 @@
-import { Badge, Box, Drawer, Space, Stepper, Title } from "@mantine/core";
-import { BsChevronUp, BsChevronDown } from "react-icons/bs";
+import React from "react";
+import {
+  Badge,
+  Box,
+  Drawer,
+  Space,
+  Text,
+  Timeline,
+  Title,
+} from "@mantine/core";
+import { useQueryClient } from "react-query";
 import { isDesktop } from "react-device-detect";
 import { TransitIcon } from "../LiveMarker";
+import { useQuery } from "react-query";
+import { useHistory, useLocation, useParams } from "react-router-dom";
+import { io } from "socket.io-client";
+import { Route } from "../../interfaces";
 
-const DrawerTitle = (props: { type: number; title: string; color: string }) => {
+const socket = io(window.location.origin);
+
+const DrawerTitle = (props: {
+  type: number;
+  title: string;
+  color: string;
+  label: string;
+}) => {
   return (
     <Box
       sx={() => ({
@@ -37,6 +57,17 @@ const DrawerTitle = (props: { type: number; title: string; color: string }) => {
           alignItems: "center",
         })}
       >
+        <Title
+          sx={() => ({
+            color: `#${props.color}`,
+            marginRight: "4px",
+            paddingRight: "4px",
+            borderRight: `2px solid #${props.color}`,
+          })}
+          order={6}
+        >
+          {props.label}
+        </Title>
         <Title sx={() => ({ color: `#${props.color}` })} order={6}>
           {props.title}
         </Title>
@@ -45,45 +76,118 @@ const DrawerTitle = (props: { type: number; title: string; color: string }) => {
   );
 };
 
+const getCurrentStopIndex = (currentStopId: string, stops: any[]) => {
+  let index;
+  stops?.map((stop: any, stopIndex: number) =>
+    stop?.relationships?.child_stops?.data?.map((childStop: any) => {
+      if (childStop?.id === currentStopId) {
+        index = stopIndex;
+      }
+    })
+  );
+  return index;
+};
+
 export const LineDrawer = (props: {
   lineRoute?: any;
   setLineRoute(s: any): void;
 }) => {
+  const history: any = useHistory();
+  const location: any = useLocation();
+  const [vehicle, setVehicle]: any = React.useState(location?.state?.vehicle);
+  const params: { transit_type: string; route_id: string; transit_id: string } =
+    useParams();
+
+  React.useEffect(() => {
+    socket.on(params.transit_id, ({ data }: { data: any }) => {
+      const parsed = JSON.parse(data);
+      setVehicle(parsed);
+      console.log(parsed);
+      // if (parsed.id === params.transit_id) {
+      //   setVehicle(parsed);
+      // }
+    });
+
+    return function cleanUp() {
+      socket.disconnect();
+    };
+  }, [params.transit_id]);
+
+  const { data } = useQuery(
+    ["stops", params.route_id],
+    () =>
+      fetch(`/api/stops/${params?.route_id}`).then((res) => {
+        return res.json();
+      }),
+    {
+      enabled: !!params.route_id,
+      retry: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+
   if (!props.lineRoute) {
     return null;
   }
-  const { route, vehicle } = props.lineRoute;
-  const [start, end] = route?.attributes?.direction_destinations;
-  const [outbound, inbound] = route?.attributes?.direction_names;
 
-  console.log({ route, vehicle });
+  const currentStopIndex =
+    getCurrentStopIndex(
+      location?.state?.vehicle?.relationships?.stop?.data?.id,
+      data?.stops
+    ) ?? 0;
+
+  //add socket listener to know when stop changes
+
   return (
     <Drawer
-      opened={!!props.lineRoute && isDesktop}
-      onClose={() => props.setLineRoute(false)}
+      opened={!!params.transit_id && isDesktop}
+      onClose={() => history.push("/")}
       title={
         <DrawerTitle
-          color={route?.attributes?.color}
+          color={location?.state?.route?.attributes?.color}
           title={props?.lineRoute?.route?.attributes?.long_name}
-          type={route?.attributes?.type}
+          label={location?.state?.vehicle?.attributes?.label}
+          type={location?.state?.route?.attributes?.type}
         />
       }
       padding="xl"
       size="lg"
       position="right"
       withOverlay={false}
+      sx={() => ({ overflow: "scroll" })}
+      className="drawer"
     >
       <Badge
         fullWidth
         style={{
-          backgroundColor: `#${route.attributes.color}`,
+          backgroundColor: `#${location?.state?.route?.attributes?.color}`,
           color: "white",
         }}
       >
-        {route.attributes.description}
+        {location?.state?.route.attributes.description}
       </Badge>
       <Space h="md" />
-      <Stepper active={-1} breakpoint="sm" orientation="vertical">
+      <Timeline active={currentStopIndex} bulletSize={24} lineWidth={2}>
+        {data?.stops?.map((stop: any, index: number) => {
+          return (
+            <Timeline.Item
+              lineVariant={index === currentStopIndex ? "dashed" : "solid"}
+              color="gray"
+              bullet={
+                <TransitIcon value={location?.state?.route?.attributes?.type} />
+              }
+              title={stop?.attributes?.name}
+            >
+              <Text size="xs" color="dimmed">
+                {stop?.attributes?.address}
+              </Text>
+            </Timeline.Item>
+          );
+        })}
+      </Timeline>
+      {/* <Stepper active={-1} breakpoint="sm" orientation="vertical">
         <Stepper.Step
           icon={<BsChevronUp />}
           label={end}
@@ -94,7 +198,9 @@ export const LineDrawer = (props: {
           label={start}
           description={outbound}
         ></Stepper.Step>
-      </Stepper>
+      </Stepper> */}
     </Drawer>
   );
 };
+
+// compare vehicle stop ID to stops ID
