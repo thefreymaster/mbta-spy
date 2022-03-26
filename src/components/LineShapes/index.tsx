@@ -2,7 +2,7 @@ import { decode } from "@googlemaps/polyline-codec";
 import React from "react";
 import { Layer, Source } from "react-map-gl";
 import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 const transitTypeColors = new Map();
 transitTypeColors.set("0", "00843d");
@@ -25,14 +25,17 @@ export const LineShapes = (props: {
   vehicleType: string;
   dataRoutes: any;
 }) => {
+  const location: any = useLocation();
   const params: { transit_type: string; route_id: string; transit_id: string } =
     useParams();
   const { isLoading, data } = useQuery(
-    ["line-polyline", params.transit_type || params.route_id],
+    ["line-polyline", params.transit_type + params.route_id],
     () =>
       fetch(
         `/api/shapes/${
-          params.transit_type && params.transit_id ? params.route_id : props.shapeIds
+          params.transit_type && params.transit_id
+            ? params.route_id
+            : props.shapeIds
         }`
       ).then((res) => {
         return res.json();
@@ -73,9 +76,9 @@ export const LineShapes = (props: {
                 paint={{
                   "line-width": 2,
                   "line-color": `#${
-                    params.transit_type
-                      ? transitTypeColors.get(params.transit_type)
-                      : props?.lineRoute?.route?.attributes?.color
+                    params.transit_type && params.transit_id
+                      ? location?.state?.route?.attributes?.color
+                      : transitTypeColors.get(params.transit_type)
                   }`,
                 }}
               />
@@ -84,6 +87,6 @@ export const LineShapes = (props: {
         })}
       </>
     );
-  }, [isLoading, data?.shapes?.length, params.transit_type]);
+  }, [isLoading, data?.shapes?.length, params.transit_type, params.transit_id]);
   return <>{memorizedShapes}</>;
 };
