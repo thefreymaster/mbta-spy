@@ -24,30 +24,31 @@ export const TransitIcon = (props: {
   const transitTypes = new Map();
   transitTypes.set(
     0,
-    <ActionIcon
-      {...props.containerStyle}
-      variant="hover"
+    <Box
+      style={{ padding: 3 }}
       sx={(theme) => ({
-        borderRadius: 100,
+        boxShadow: theme.shadows.xl,
         "&:hover": {
           boxShadow: theme.shadows.lg,
         },
+        ...props.containerStyle,
       })}
       onClick={props.onClick}
     >
       <MdTram color={props.color ?? "white"} style={{ ...props.style }} />
-    </ActionIcon>
+    </Box>
   );
   transitTypes.set(
     1,
-    <ActionIcon
-      {...props.containerStyle}
-      variant="hover"
+    <Box
+      style={{ padding: 3 }}
       sx={(theme) => ({
-        borderRadius: 100,
+        hover: { boxShadow: theme.shadows.xl },
         "&:hover": {
           boxShadow: theme.shadows.lg,
+          backgroundColor: props?.containerStyle?.backgroundColor,
         },
+        ...props.containerStyle,
       })}
       onClick={props.onClick}
     >
@@ -56,18 +57,18 @@ export const TransitIcon = (props: {
         color={props.color ?? "white"}
         style={{ ...props.style }}
       />
-    </ActionIcon>
+    </Box>
   );
   transitTypes.set(
     2,
-    <ActionIcon
-      {...props.containerStyle}
-      variant="hover"
+    <Box
+      style={{ padding: 3 }}
       sx={(theme) => ({
-        borderRadius: 100,
+        boxShadow: theme.shadows.xl,
         "&:hover": {
           boxShadow: theme.shadows.lg,
         },
+        ...props.containerStyle,
       })}
       onClick={props.onClick}
     >
@@ -76,18 +77,18 @@ export const TransitIcon = (props: {
         style={{ ...props.style }}
         color={props.color ?? "white"}
       />
-    </ActionIcon>
+    </Box>
   );
   transitTypes.set(
     3,
-    <ActionIcon
-      {...props.containerStyle}
-      variant="hover"
+    <Box
+      style={{ padding: 3 }}
       sx={(theme) => ({
-        borderRadius: 100,
+        boxShadow: theme.shadows.xl,
         "&:hover": {
           boxShadow: theme.shadows.lg,
         },
+        ...props.containerStyle,
       })}
       onClick={props.onClick}
     >
@@ -96,7 +97,7 @@ export const TransitIcon = (props: {
         style={{ ...props.style }}
         color={props.color ?? "white"}
       />
-    </ActionIcon>
+    </Box>
   );
 
   return <>{transitTypes.get(props.value) ?? transitTypes.get(0)}</>;
@@ -132,6 +133,8 @@ const LiveMarker = (props: {
     // };
   }, [params.transit_type, props.vehicle.id]);
 
+  console.log(props.vehicle);
+
   const memorizedMarker = useMemo(() => {
     return (
       <Marker
@@ -153,15 +156,23 @@ const LiveMarker = (props: {
         >
           <TransitIcon
             value={props.route?.attributes?.type}
-            style={{
+            containerStyle={{
               backgroundColor: `#${props.route?.attributes?.color}`,
+              transform: `rotate(${
+                props.vehicle?.attributes?.bearing + 45
+              }deg)`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              borderRadius: 100,
-              width: 15,
-              height: 15,
-              padding: 2,
+              borderRadius: "0px 100px 100px 100px",
+              maxWidth: 15,
+              maxHeight: 15,
+              padding: 0,
+            }}
+            style={{
+              transform: `rotate(${
+                (props.vehicle?.attributes?.bearing + 45) * -1
+              }deg)`,
             }}
             onClick={() => {
               console.log({ vehicle, route: props.route });

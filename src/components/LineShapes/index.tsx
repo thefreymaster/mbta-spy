@@ -74,7 +74,7 @@ export const LineShapes = (props: {
                 id={`line-${p?.id}`}
                 type="line"
                 paint={{
-                  "line-width": 2,
+                  "line-width": 1,
                   "line-color": `#${
                     params.transit_type && params.transit_id
                       ? location?.state?.route?.attributes?.color
