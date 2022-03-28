@@ -3,6 +3,7 @@ import React from "react";
 import { Layer, Source } from "react-map-gl";
 import { useQuery } from "react-query";
 import { useLocation, useParams } from "react-router-dom";
+import { DEFAULT_TRANSIT_TYPES } from "../LiveMap/index";
 
 const transitTypeColors = new Map();
 transitTypeColors.set("0", "00843d");
@@ -28,20 +29,37 @@ export const LineShapes = (props: {
   const location: any = useLocation();
   const params: { transit_type: string; route_id: string; transit_id: string } =
     useParams();
+
+  const getShapesId = () => {
+    if (params.transit_type && params.transit_id) {
+      return params.route_id;
+    }
+    if (params.transit_type) {
+      return props.shapeIds;
+    }
+    return props.shapeIds;
+  };
+
+  const getShapesColors = (color: string) => {
+    if (params.transit_type && params.transit_id) {
+      return color;
+    }
+    // if (params.transit_type) {
+    //   return transitTypeColors.get(params.transit_type);
+    // }
+    return "a5a5a5";
+  };
+
+  console.log(props.shapeIds);
+
   const { isLoading, data } = useQuery(
     ["line-polyline", params.transit_type + params.route_id],
     () =>
-      fetch(
-        `/api/shapes/${
-          params.transit_type && params.transit_id
-            ? params.route_id
-            : props.shapeIds
-        }`
-      ).then((res) => {
+      fetch(`/api/shapes/${getShapesId()}`).then((res) => {
         return res.json();
       }),
     {
-      enabled: !!params.transit_type || !!params.transit_id,
+      // enabled: !!params.transit_type || !!params.transit_id,
       retry: false,
       refetchOnMount: false,
       refetchOnReconnect: false,
@@ -74,12 +92,10 @@ export const LineShapes = (props: {
                 id={`line-${p?.id}`}
                 type="line"
                 paint={{
-                  "line-width": 1,
-                  "line-color": `#${
-                    params.transit_type && params.transit_id
-                      ? location?.state?.route?.attributes?.color
-                      : transitTypeColors.get(params.transit_type)
-                  }`,
+                  "line-width": 2,
+                  "line-color": `#${getShapesColors(
+                    location?.state?.route?.attributes?.color
+                  )}`,
                 }}
               />
             </Source>

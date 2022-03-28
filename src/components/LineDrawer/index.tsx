@@ -42,13 +42,11 @@ const DrawerTitle = (props: {
           alignItems: "center",
         })}
       >
-        <Avatar radius="xl">
+        <Avatar radius="xl" style={{ border: `3px solid #${props.color}` }}>
           <TransitIcon
             value={props?.type}
             color={props.color}
-            containerStyle={{
-              border: `3px solid #${props.color}`,
-            }}
+            style={{ display: "flex" }}
           />
         </Avatar>
       </Box>
@@ -181,6 +179,7 @@ export const LineDrawer = (props: {
                   bullet={
                     <TransitIcon
                       value={location?.state?.route?.attributes?.type}
+                      style={{ display: "flex" }}
                     />
                   }
                   title={stop?.attributes?.name}

@@ -46,7 +46,7 @@ app.get("/api/routes", async (req, res) => {
 
 app.get("/api/shapes/:shapeId", async (req, res) => {
   const response = await axios.get(
-    `https://api-v3.mbta.com/shapes?filter%5Broute%5D=${req.params.shapeId}`
+    `https://api-v3.mbta.com/shapes?include=route&filter%5Broute%5D=${req.params.shapeId}`
   );
   const shapes = response.data;
   return res.send({ shapes: shapes.data });

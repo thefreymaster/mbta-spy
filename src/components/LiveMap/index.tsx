@@ -12,6 +12,7 @@ import { useParams } from "react-router-dom";
 
 const DEFAULT_LATITUDE = 42.35698;
 const DEFAULT_LONGITUDE = -71.06388;
+export const DEFAULT_TRANSIT_TYPES = "0,1,2";
 
 const MapContent = (props: { isDragging: boolean }) => {
   const [lineRoute, setLineRoute]: any = React.useState();
@@ -21,7 +22,25 @@ const MapContent = (props: { isDragging: boolean }) => {
   const { isLoading, isError, error, data } = useQuery(
     ["vehicles", params?.transit_type],
     () =>
-      fetch(`/api/vehicles/${params?.transit_type}`).then((res) => {
+      fetch(
+        `/api/vehicles/${params?.transit_type ?? DEFAULT_TRANSIT_TYPES}`
+      ).then((res) => {
+        return res.json();
+      }),
+    {
+      retry: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const { isLoading: isLoadingBus, data: busData } = useQuery(
+    ["vehicles", "bus"],
+    () =>
+      fetch(
+        `/api/vehicles/3`
+      ).then((res) => {
         return res.json();
       }),
     {
@@ -34,7 +53,9 @@ const MapContent = (props: { isDragging: boolean }) => {
 
   const getRouteIds = () => {
     const ids = data?.vehicles?.reduce((accumulator: string, vehicle: any) => {
-      accumulator += `${vehicle?.relationships?.route?.data?.id},`;
+      if (accumulator.indexOf(vehicle?.relationships?.route?.data?.id) === -1) {
+        accumulator += `${vehicle?.relationships?.route?.data?.id},`;
+      }
       return accumulator;
     }, "");
     return ids;
@@ -59,7 +80,7 @@ const MapContent = (props: { isDragging: boolean }) => {
     }
   );
 
-  if (isLoading || isLoadingRoutes) {
+  if (isLoading || isLoadingRoutes || isLoadingBus) {
     return (
       <Center style={{ height: "100vh", width: "100vw" }}>
         <Loader color="red" size="xl" />
@@ -70,6 +91,7 @@ const MapContent = (props: { isDragging: boolean }) => {
     console.log(error);
     return <>Error</>;
   }
+  const allVehicles = [...data.vehicles, ...busData.vehicles];
   return (
     <>
       <LineDrawer lineRoute={lineRoute} setLineRoute={setLineRoute} />
@@ -81,7 +103,7 @@ const MapContent = (props: { isDragging: boolean }) => {
         setLineRoute={setLineRoute}
         dataRoutes={dataRoutes}
       />
-      {data.vehicles.map((vehicle: any) => {
+      {allVehicles.map((vehicle: any) => {
         // console.log(vehicle)
         return (
           <div key={`marker-${vehicle.id}`}>
