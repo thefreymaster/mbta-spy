@@ -38,12 +38,11 @@ const MapContent = (props: { isDragging: boolean }) => {
   const { isLoading: isLoadingBus, data: busData } = useQuery(
     ["vehicles", "bus"],
     () =>
-      fetch(
-        `/api/vehicles/3`
-      ).then((res) => {
+      fetch(`/api/vehicles/3`).then((res) => {
         return res.json();
       }),
     {
+      enabled: !!params.transit_type,
       retry: false,
       refetchOnMount: false,
       refetchOnReconnect: false,
@@ -91,7 +90,12 @@ const MapContent = (props: { isDragging: boolean }) => {
     console.log(error);
     return <>Error</>;
   }
-  const allVehicles = [...data.vehicles, ...busData.vehicles];
+  let allVehicles;
+  if (params.transit_type) {
+    allVehicles = data.vehicles;
+  } else {
+    allVehicles = [...data.vehicles, ...busData.vehicles];
+  }
   return (
     <>
       <LineDrawer lineRoute={lineRoute} setLineRoute={setLineRoute} />
