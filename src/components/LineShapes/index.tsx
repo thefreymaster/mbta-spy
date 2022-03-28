@@ -37,7 +37,7 @@ export const LineShapes = (props: {
     if (params.transit_type) {
       return props.shapeIds;
     }
-    return props.shapeIds;
+    return null;
   };
 
   const getShapesColors = (color: string) => {

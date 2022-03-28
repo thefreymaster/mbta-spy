@@ -163,8 +163,8 @@ const LiveMarker = (props: {
               alignItems: "center",
               justifyContent: "center",
               borderRadius: "0px 100px 100px 100px",
-              maxWidth: 15,
-              maxHeight: 15,
+              maxWidth: 12,
+              maxHeight: 12,
               padding: 0,
             }}
             style={{
