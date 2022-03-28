@@ -92,9 +92,9 @@ const MapContent = (props: { isDragging: boolean }) => {
   }
   let allVehicles;
   if (params.transit_type) {
-    allVehicles = data.vehicles;
+    allVehicles = data?.vehicles;
   } else {
-    allVehicles = [...data.vehicles, ...busData.vehicles];
+    allVehicles = [...data?.vehicles, ...busData?.vehicles];
   }
   return (
     <>
