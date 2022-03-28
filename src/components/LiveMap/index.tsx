@@ -114,7 +114,7 @@ export const LiveMap = () => {
           zoom: 12,
         }}
         style={{ width: "100vw", height: "100vh" }}
-        mapStyle="mapbox://styles/mapbox/streets-v9"
+        mapStyle="mapbox://styles/thefreymaster/cl1aym2s4001514pkc1o3i37v"
       >
         <MapContent isDragging={isDragging} />
       </Map>
