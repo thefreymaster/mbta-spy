@@ -42,7 +42,7 @@ const MapContent = (props: { isDragging: boolean }) => {
         return res.json();
       }),
     {
-      enabled: !!params.transit_type,
+      enabled: !params.transit_type,
       retry: false,
       refetchOnMount: false,
       refetchOnReconnect: false,
@@ -90,10 +90,8 @@ const MapContent = (props: { isDragging: boolean }) => {
     console.log(error);
     return <>Error</>;
   }
-  let allVehicles;
-  if (params.transit_type) {
-    allVehicles = data?.vehicles;
-  } else {
+  let allVehicles = data?.vehicles;
+  if (!params?.transit_type) {
     allVehicles = [...data?.vehicles, ...busData?.vehicles];
   }
   return (
