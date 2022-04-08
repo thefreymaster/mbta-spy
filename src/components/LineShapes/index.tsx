@@ -50,7 +50,6 @@ export const LineShapes = (props: {
     return "a5a5a5";
   };
 
-  console.log(props.shapeIds);
 
   const { isLoading, data } = useQuery(
     ["line-polyline", params.transit_type + params.route_id],
@@ -68,6 +67,7 @@ export const LineShapes = (props: {
   );
 
   const memorizedShapes = React.useMemo(() => {
+    console.log('render')
     if (isLoading) {
       return null;
     }
@@ -103,6 +103,6 @@ export const LineShapes = (props: {
         })}
       </>
     );
-  }, [isLoading, data?.shapes?.length, params.transit_type, params.transit_id]);
+  }, [data?.shapes?.length, params.transit_type, params.transit_id]);
   return <>{memorizedShapes}</>;
 };

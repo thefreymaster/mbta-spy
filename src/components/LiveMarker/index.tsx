@@ -140,13 +140,13 @@ const LiveMarker = (props: {
     !map?.isZooming();
 
   const memorizedMarker = useMemo(() => {
-    console.log({
-      moving: map?.isMoving(),
-      easing: !map?.isEasing(),
-      rotating: !map?.isRotating(),
-      zooming: !map?.isZooming(),
-      map,
-    });
+    // console.log({
+    //   moving: map?.isMoving(),
+    //   easing: !map?.isEasing(),
+    //   rotating: !map?.isRotating(),
+    //   zooming: !map?.isZooming(),
+    //   map,
+    // });
     return (
       <Marker
         longitude={vehicle.attributes.longitude}
@@ -155,7 +155,7 @@ const LiveMarker = (props: {
         style={{
           willChange: "transform",
           // @ts-ignore
-          transition: !isInteracting && "transform 200ms ease-in-out",
+          // transition: isAnimating && "transform 200ms ease-in-out",
         }}
       >
         <Link

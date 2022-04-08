@@ -1,3 +1,5 @@
+import "./icon.css";
+
 const style = {
   borderRadius: "0px 100px 100px 100px",
   minWidth: 12,
@@ -6,6 +8,8 @@ const style = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  boxShadow:
+    "0 20px 25px -5px rgba(0, 0, 0, 0.1),0 10px 10px -5px rgba(0, 0, 0, 0.04)",
 };
 
 interface ITransitIcon {
@@ -21,13 +25,13 @@ export const CommuterRail = (props: ITransitIcon) => (
       transform: props.transform,
       backgroundColor: `#${props.backgroundColor}`,
     }}
+    className="marker"
   >
     <svg
       stroke="currentColor"
       fill="currentColor"
       stroke-width="0"
       viewBox="0 0 24 24"
-      className="marker"
       color="white"
       height="1em"
       width="1em"
@@ -50,13 +54,13 @@ export const Bus = (props: ITransitIcon) => (
       transform: props.transform,
       backgroundColor: `#${props.backgroundColor}`,
     }}
+    className="marker"
   >
     <svg
       stroke="currentColor"
       fill="currentColor"
       stroke-width="0"
       viewBox="0 0 24 24"
-      className="marker"
       color="white"
       height="1em"
       width="1em"
@@ -81,13 +85,13 @@ export const Subway = (props: ITransitIcon) => (
       transform: props.transform,
       backgroundColor: `#${props.backgroundColor}`,
     }}
+    className="marker"
   >
     <svg
       stroke="currentColor"
       fill="currentColor"
       stroke-width="0"
       viewBox="0 0 24 24"
-      className="marker"
       color="white"
       height="1em"
       width="1em"
@@ -110,6 +114,7 @@ export const LiteRail = (props: ITransitIcon) => (
       transform: props.transform,
       backgroundColor: `#${props.backgroundColor}`,
     }}
+    className="marker"
   >
     <svg
       stroke="currentColor"
