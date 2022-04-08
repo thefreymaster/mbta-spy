@@ -37,7 +37,7 @@ const App = () => {
               }}
             />
             <Space w="sm" />
-            <Title order={6}>MBTA Realtime</Title>
+            <Title order={6}>MBTA Spy</Title>
           </Header>
         }
       >

@@ -14,7 +14,7 @@ const DEFAULT_LATITUDE = 42.35698;
 const DEFAULT_LONGITUDE = -71.06388;
 export const DEFAULT_TRANSIT_TYPES = "0,1,2";
 
-const MapContent = (props: { isDragging: boolean }) => {
+const MapContent = () => {
   const [lineRoute, setLineRoute]: any = React.useState();
   const [vehicleType, setVehicleType] = React.useState("");
   const params: { transit_type: string } = useParams();
@@ -113,7 +113,6 @@ const MapContent = (props: { isDragging: boolean }) => {
               route={dataRoutes.routes.find(
                 (r: any) => r.id === vehicle.relationships.route.data.id
               )}
-              isDragging={props.isDragging}
               vehicle={vehicle}
               setLineRoute={setLineRoute}
             />
@@ -125,8 +124,6 @@ const MapContent = (props: { isDragging: boolean }) => {
 };
 
 export const LiveMap = () => {
-  const [isDragging, setIsDragging] = React.useState(false);
-
   return (
     <>
       <Map
@@ -138,9 +135,9 @@ export const LiveMap = () => {
           zoom: 12,
         }}
         style={{ width: "100vw", height: "100vh" }}
-        mapStyle="mapbox://styles/thefreymaster/cl1aym2s4001514pkc1o3i37v"
+        mapStyle="mapbox://styles/thefreymaster/ckrgryqok3xbu17okr3jnftem"
       >
-        <MapContent isDragging={isDragging} />
+        <MapContent />
       </Map>
     </>
   );

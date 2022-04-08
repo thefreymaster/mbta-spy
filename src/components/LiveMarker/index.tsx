@@ -8,9 +8,10 @@ import {
   MdOutlineDirectionsBus,
 } from "react-icons/md";
 import "./live-marker.css";
-import { ActionIcon, Box } from "@mantine/core";
+import { Box } from "@mantine/core";
 import { Route } from "../../interfaces";
 import { Link, useHistory, useParams } from "react-router-dom";
+import { TransitIcons } from "../Icons/index";
 
 const socket = io(window.location.origin);
 
@@ -105,7 +106,6 @@ export const TransitIcon = (props: {
 
 const LiveMarker = (props: {
   vehicle: any;
-  isDragging: boolean;
   route: Route;
   setLineRoute(s: any): void;
 }) => {
@@ -133,7 +133,20 @@ const LiveMarker = (props: {
     // };
   }, [params.transit_type, props.vehicle.id]);
 
+  const isInteracting =
+    map?.isMoving() ||
+    !map?.isEasing() ||
+    !map?.isRotating() ||
+    !map?.isZooming();
+
   const memorizedMarker = useMemo(() => {
+    console.log({
+      moving: map?.isMoving(),
+      easing: !map?.isEasing(),
+      rotating: !map?.isRotating(),
+      zooming: !map?.isZooming(),
+      map,
+    });
     return (
       <Marker
         longitude={vehicle.attributes.longitude}
@@ -142,8 +155,7 @@ const LiveMarker = (props: {
         style={{
           willChange: "transform",
           // @ts-ignore
-          transition:
-            isAnimating && !map?.isMoving() && "transform 200ms ease-in-out",
+          transition: !isInteracting && "transform 200ms ease-in-out",
         }}
       >
         <Link
@@ -152,7 +164,15 @@ const LiveMarker = (props: {
             state: { route: props.route, vehicle: vehicle },
           }}
         >
-          <TransitIcon
+          <TransitIcons
+            type={props.route?.attributes?.type}
+            backgroundColor={props.route?.attributes?.color}
+            transform={`rotate(${props.vehicle?.attributes?.bearing + 45}deg)`}
+            svgTransform={`rotate(${
+              (props.vehicle?.attributes?.bearing + 45) * -1
+            }deg)`}
+          />
+          {/* <TransitIcon
             value={props.route?.attributes?.type}
             containerStyle={{
               backgroundColor: `#${props.route?.attributes?.color}`,
@@ -176,7 +196,7 @@ const LiveMarker = (props: {
               console.log({ vehicle, route: props.route });
               props.setLineRoute({ route: props.route, vehicle: vehicle });
             }}
-          />
+          /> */}
         </Link>
       </Marker>
     );
