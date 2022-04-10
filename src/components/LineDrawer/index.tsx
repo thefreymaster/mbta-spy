@@ -70,7 +70,7 @@ const DrawerTitle = (props: {
           {props.label}
         </Title>
         <Title sx={() => ({ color: `#${props.color}` })} order={6}>
-          {props.title}
+          {props.type}
         </Title>
       </Box>
     </Box>
@@ -144,7 +144,11 @@ export const LineDrawer = (props: {
           color={location?.state?.route?.attributes?.color}
           title={props?.lineRoute?.route?.attributes?.long_name}
           label={location?.state?.vehicle?.attributes?.label}
-          type={location?.state?.route?.attributes?.type}
+          type={
+            location?.state?.route?.attributes?.short_name === ""
+              ? location?.state?.route?.attributes?.long_name
+              : location?.state?.route?.attributes?.short_name
+          }
         />
       }
       padding="xl"

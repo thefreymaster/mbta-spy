@@ -134,19 +134,18 @@ const LiveMarker = (props: {
   }, [params.transit_type, props.vehicle.id]);
 
   const isInteracting =
-    map?.isMoving() ||
-    !map?.isEasing() ||
-    !map?.isRotating() ||
-    !map?.isZooming();
+    map?.isMoving() || map?.isEasing() || map?.isRotating() || map?.isZooming();
+
+  console.log(map?.isMoving());
 
   const memorizedMarker = useMemo(() => {
-    // console.log({
-    //   moving: map?.isMoving(),
-    //   easing: !map?.isEasing(),
-    //   rotating: !map?.isRotating(),
-    //   zooming: !map?.isZooming(),
-    //   map,
-    // });
+    console.log({
+      moving: map?.isMoving(),
+      easing: map?.isEasing(),
+      rotating: map?.isRotating(),
+      zooming: map?.isZooming(),
+      map,
+    });
     return (
       <Marker
         longitude={vehicle.attributes.longitude}
@@ -155,7 +154,7 @@ const LiveMarker = (props: {
         style={{
           willChange: "transform",
           // @ts-ignore
-          // transition: isAnimating && "transform 200ms ease-in-out",
+          // transition: `transform ${isInteracting ? 0 : 200}ms ease-in-out`,
         }}
       >
         <Link
@@ -172,31 +171,6 @@ const LiveMarker = (props: {
               (props.vehicle?.attributes?.bearing + 45) * -1
             }deg)`}
           />
-          {/* <TransitIcon
-            value={props.route?.attributes?.type}
-            containerStyle={{
-              backgroundColor: `#${props.route?.attributes?.color}`,
-              transform: `rotate(${
-                props.vehicle?.attributes?.bearing + 45
-              }deg)`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "0px 100px 100px 100px",
-              maxWidth: 12,
-              maxHeight: 12,
-              padding: 0,
-            }}
-            style={{
-              transform: `rotate(${
-                (props.vehicle?.attributes?.bearing + 45) * -1
-              }deg)`,
-            }}
-            onClick={() => {
-              console.log({ vehicle, route: props.route });
-              props.setLineRoute({ route: props.route, vehicle: vehicle });
-            }}
-          /> */}
         </Link>
       </Marker>
     );

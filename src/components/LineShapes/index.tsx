@@ -3,7 +3,8 @@ import React from "react";
 import { Layer, Source } from "react-map-gl";
 import { useQuery } from "react-query";
 import { useLocation, useParams } from "react-router-dom";
-import { DEFAULT_TRANSIT_TYPES } from "../LiveMap/index";
+import simplify from "simplify-geometry";
+import * as turf from "@turf/turf";
 
 const transitTypeColors = new Map();
 transitTypeColors.set("0", "00843d");
@@ -19,27 +20,10 @@ const getCoordinates = (polyline: string) => {
   return newParsedPolyline;
 };
 
-export const LineShapes = (props: {
-  lineRoute?: any;
-  shapeIds: string;
-  setLineRoute(s: any): void;
-  vehicleType: string;
-  dataRoutes: any;
-}) => {
+const Line = (props: { polyline: any }) => {
   const location: any = useLocation();
   const params: { transit_type: string; route_id: string; transit_id: string } =
     useParams();
-
-  const getShapesId = () => {
-    if (params.transit_type && params.transit_id) {
-      return params.route_id;
-    }
-    if (params.transit_type) {
-      return props.shapeIds;
-    }
-    return null;
-  };
-
   const getShapesColors = (color: string) => {
     if (params.transit_type && params.transit_id) {
       return color;
@@ -50,6 +34,56 @@ export const LineShapes = (props: {
     return "a5a5a5";
   };
 
+  const rawCoordinates: any = props.polyline?.attributes?.polyline;
+
+  return (
+    <Source
+      id={`polyline-${props.polyline?.id}`}
+      key={`polyline-${props.polyline?.id}`}
+      type="geojson"
+      data={{
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          // @ts-ignore
+          coordinates: rawCoordinates,
+        },
+      }}
+    >
+      <Layer
+        id={`line-${props.polyline?.id}`}
+        type="line"
+        paint={{
+          "line-width": 4,
+          "line-color": `#${getShapesColors(
+            location?.state?.route?.attributes?.color
+          )}`,
+        }}
+      />
+    </Source>
+  );
+};
+
+export const LineShapes = (props: {
+  lineRoute?: any;
+  shapeIds: string;
+  setLineRoute(s: any): void;
+  vehicleType: string;
+  dataRoutes: any;
+}) => {
+  const params: { transit_type: string; route_id: string; transit_id: string } =
+    useParams();
+
+  const getShapesId = () => {
+    if (params.transit_type && params.transit_id) {
+      return params.route_id;
+    }
+    if (params.transit_type) {
+      return props.shapeIds;
+    }
+    return props.shapeIds;
+  };
 
   const { isLoading, data } = useQuery(
     ["line-polyline", params.transit_type + params.route_id],
@@ -66,40 +100,45 @@ export const LineShapes = (props: {
     }
   );
 
+  // data?.shapes.map((currentValue: any) => {
+  //   console.log(
+  //     simplify(getCoordinates(currentValue?.attributes?.polyline), 0.01)
+  //   );
+  // });
+
+  // const total = data?.shapes.reduce((prevValue: any, currentValue: any) => {
+  //   let newTotal;
+  //   newTotal =
+  //     prevValue +
+  //     simplify(getCoordinates(currentValue?.attributes?.polyline), 0.01)
+  //       ?.length;
+
+  //   return newTotal;
+  // }, 0);
+
+  const parsedShapes = data?.shapes.map((shape: any) => ({
+    ...shape,
+    length: getCoordinates(shape.attributes.polyline)?.length,
+    attributes: { polyline: getCoordinates(shape.attributes.polyline) },
+  }));
+
+  // @ts-ignore
+  const uniqueShapes: any = [
+    ...new Map(
+      parsedShapes?.map((shape: any) => [shape.length, shape])
+    ).values(),
+  ];
+
+  // console.log({ parsedShapes, uniqueShapes });
+
   const memorizedShapes = React.useMemo(() => {
-    console.log('render')
     if (isLoading) {
       return null;
     }
     return (
       <>
-        {data?.shapes?.map((p: any) => {
-          return (
-            <Source
-              id={`polyline-${p?.id}`}
-              key={`polyline-${p?.id}`}
-              type="geojson"
-              data={{
-                type: "Feature",
-                properties: {},
-                geometry: {
-                  type: "LineString",
-                  coordinates: getCoordinates(p?.attributes?.polyline),
-                },
-              }}
-            >
-              <Layer
-                id={`line-${p?.id}`}
-                type="line"
-                paint={{
-                  "line-width": 2,
-                  "line-color": `#${getShapesColors(
-                    location?.state?.route?.attributes?.color
-                  )}`,
-                }}
-              />
-            </Source>
-          );
+        {uniqueShapes?.map((p: any) => {
+          return <Line polyline={p} />;
         })}
       </>
     );

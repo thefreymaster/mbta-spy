@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { useQuery } from "react-query";
 import Map from "react-map-gl";
+import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import LiveMarker from "../LiveMarker/index";
@@ -9,6 +10,10 @@ import { LineShapes } from "../LineShapes/index";
 import { LineDrawer } from "../LineDrawer";
 import { VehicleType } from "../VehicleType/index";
 import { useParams } from "react-router-dom";
+
+import "./live-map.css";
+
+mapboxgl.accessToken = process.env.REACT_APP_MAP_BOX_TOKEN || "";
 
 const DEFAULT_LATITUDE = 42.35698;
 const DEFAULT_LONGITUDE = -71.06388;
@@ -124,8 +129,40 @@ const MapContent = () => {
 };
 
 export const LiveMap = () => {
+  // const mapContainerRef = useRef(null);
+  // const [lng, setLng] = useState(DEFAULT_LONGITUDE);
+  // const [lat, setLat] = useState(DEFAULT_LATITUDE);
+  // const [zoom, setZoom] = useState(12);
+
+  // // Initialize map when component mounts
+  // React.useEffect(() => {
+  //   const map: any = new mapboxgl.Map({
+  //     // @ts-ignore
+  //     container: mapContainerRef.current,
+  //     style: "mapbox://styles/thefreymaster/ckrgryqok3xbu17okr3jnftem",
+  //     center: [lng, lat],
+  //     zoom: zoom,
+  //   });
+
+  //   // Add navigation control (the +/- zoom buttons)
+  //   // map.addControl(new mapboxgl.NavigationControl(), "top-right");
+
+  //   map.on("move", () => {
+  //     setLng(map.getCenter().lng.toFixed(4));
+  //     setLat(map.getCenter().lat.toFixed(4));
+  //     setZoom(map.getZoom().toFixed(2));
+  //   });
+
+  //   // Clean up on unmount
+  //   return () => map.remove();
+  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
-    <>
+    <div
+      // ref={mapContainerRef}
+      className="map-container"
+      // style={{ width: "100vw", height: "100vh" }}
+    >
       <Map
         reuseMaps
         mapboxAccessToken={process.env.REACT_APP_MAP_BOX_TOKEN}
@@ -139,6 +176,6 @@ export const LiveMap = () => {
       >
         <MapContent />
       </Map>
-    </>
+    </div>
   );
 };
