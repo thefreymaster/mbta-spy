@@ -12,17 +12,44 @@ This project shows the entire MBTA fleet of vehicles on a map, updating in real-
 - Websockets
 - Server Sent Events
 
+## Prerequisits
+
+You must have two API tokens to run locally.  Create a file called `.env`, and add the following keys:
+- `MBTA_TOKEN`
+- `REACT_APP_MAP_BOX_TOKEN`
+
+Your `.env` file should look like the below
+
+```
+MBTA_TOKEN=myMBTAToken
+REACT_APP_MAP_BOX_TOKEN=myMapboxToken
+```
+
+MBTA Token: https://api-v3.mbta.com/
+Mapbox Token: https://docs.mapbox.com/help/getting-started/access-tokens/
+
 ## Available Scripts
 
 In the project directory, you can run:
 
-### `yarn start`
+### Frontend
+
+```
+npm run fe
+```
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
+
+### Backend
+
+Runs ExpressJS backend service
+```
+npm run start
+```
 
 ### `yarn test`
 
@@ -38,19 +65,3 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
