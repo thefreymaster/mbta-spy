@@ -12,7 +12,7 @@ This project shows the entire MBTA fleet of vehicles on a map, updating in real-
 - Websockets
 - Server Sent Events
 
-## Prerequisits
+## Prerequisites
 
 You must have two API tokens to run locally.  Create a file called `.env`, and add the following keys:
 - `MBTA_TOKEN`
