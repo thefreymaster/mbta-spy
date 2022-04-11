@@ -125,7 +125,7 @@ const LiveMarker = (props: {
         setIsAnimating(true);
         setTimeout(() => {
           setIsAnimating(false);
-        }, 200);
+        }, 100);
       }
     });
 
@@ -143,7 +143,7 @@ const LiveMarker = (props: {
         style={{
           willChange: "transform",
           // @ts-ignore
-          transition: isAnimating && "transform 200ms ease-in-out",
+          transition: isAnimating && "transform 100ms ease-in-out",
         }}
         onClick={(event: any) => {
           props.onMove({

@@ -36,33 +36,40 @@ const Line = (props: { polyline: any }) => {
 
   const rawCoordinates: any = props.polyline?.attributes?.polyline;
 
-  return (
-    <Source
-      id={`polyline-${props.polyline?.id}`}
-      key={`polyline-${props.polyline?.id}`}
-      type="geojson"
-      data={{
-        type: "Feature",
-        properties: {},
-        geometry: {
-          type: "LineString",
-          // @ts-ignore
-          coordinates: rawCoordinates,
-        },
-      }}
-    >
-      <Layer
-        id={`line-${props.polyline?.id}`}
-        type="line"
-        paint={{
-          "line-width": 4,
-          "line-color": `#${getShapesColors(
-            location?.state?.route?.attributes?.color
-          )}`,
+  const memorizedLine = React.useMemo(() => {
+    return (
+      <Source
+        id={`polyline-${props.polyline?.id}`}
+        key={`polyline-${props.polyline?.id}`}
+        type="geojson"
+        data={{
+          type: "Feature",
+          properties: {},
+          geometry: {
+            type: "LineString",
+            // @ts-ignore
+            coordinates: rawCoordinates,
+          },
         }}
-      />
-    </Source>
-  );
+      >
+        <Layer
+          id={`line-${props.polyline?.id}`}
+          type="line"
+          paint={{
+            "line-width": 3,
+            "line-color": `#${getShapesColors(
+              location?.state?.route?.attributes?.color
+            )}`,
+          }}
+        />
+      </Source>
+    );
+  }, [
+    location?.state?.route?.attributes?.color,
+    props.polyline?.id,
+    rawCoordinates,
+  ]);
+  return <>{memorizedLine}</>;
 };
 
 export const LineShapes = (props: {
@@ -85,15 +92,15 @@ export const LineShapes = (props: {
     }
     return props.shapeIds;
   };
-
+  const renderLines = !!params.transit_type || props.checked;
   const { isLoading, data } = useQuery(
     ["line-polyline", params.transit_type + params.route_id],
     () =>
-      fetch(`/api/shapes/${props.checked && getShapesId()}`).then((res) => {
+      fetch(`/api/shapes/${renderLines && getShapesId()}`).then((res) => {
         return res.json();
       }),
     {
-      enabled: props.checked,
+      enabled: renderLines,
       retry: false,
       refetchOnMount: false,
       refetchOnReconnect: false,
@@ -144,5 +151,5 @@ export const LineShapes = (props: {
       </>
     );
   }, [data?.shapes?.length, params.transit_type, params.transit_id]);
-  return <>{props.checked ? memorizedShapes : null}</>;
+  return <>{renderLines ? memorizedShapes : null}</>;
 };

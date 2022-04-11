@@ -95,6 +95,7 @@ const getCurrentStopIndex = (currentStopId: string, stops: any[]) => {
 export const LineDrawer = (props: {
   lineRoute?: any;
   setLineRoute(s: any): void;
+  onMove(event: any): void;
 }) => {
   const history: any = useHistory();
   const location: any = useLocation();
@@ -138,7 +139,14 @@ export const LineDrawer = (props: {
   return (
     <Drawer
       opened={!!params.transit_id && isDesktop}
-      onClose={() => history.push("/")}
+      onClose={() => {
+        props.onMove({
+          longitude: location?.state?.vehicle.attributes.longitude,
+          latitude: location?.state?.vehicle.attributes.latitude,
+          zoom: 13,
+        });
+        history.push("/");
+      }}
       title={
         <DrawerTitle
           color={location?.state?.route?.attributes?.color}

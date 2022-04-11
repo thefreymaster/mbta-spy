@@ -20,7 +20,7 @@ const DEFAULT_LONGITUDE = -71.06388;
 export const DEFAULT_TRANSIT_TYPES = "0,1,2";
 
 const MapContent = (props: { onMove(event: any): void }) => {
-  const [checked, setChecked]: any = React.useState(true);
+  const [checked, setChecked]: any = React.useState(false);
   const [lineRoute, setLineRoute]: any = React.useState();
   const [vehicleType, setVehicleType] = React.useState("");
   const params: { transit_type: string } = useParams();
@@ -118,7 +118,11 @@ const MapContent = (props: { onMove(event: any): void }) => {
         size="lg"
       />
       ;
-      <LineDrawer lineRoute={lineRoute} setLineRoute={setLineRoute} />
+      <LineDrawer
+        onMove={props.onMove}
+        lineRoute={lineRoute}
+        setLineRoute={setLineRoute}
+      />
       <VehicleType vehicleType={vehicleType} setVehicleType={setVehicleType} />
       <LineShapes
         vehicleType={vehicleType}
@@ -147,22 +151,16 @@ const MapContent = (props: { onMove(event: any): void }) => {
 };
 
 export const LiveMap = () => {
-  // const mapContainerRef = useRef(null);
-  // const [longitude, setLng] = useState(DEFAULT_LONGITUDE);
-  // const [latitude, setLat] = useState(DEFAULT_LATITUDE);
-  // const [zoom, setZoom] = useState(12);
-
-  const [viewState, setViewState] = React.useState({
-    longitude: DEFAULT_LONGITUDE,
-    latitude: DEFAULT_LATITUDE,
-    zoom: 12,
-  });
   const mapRef = useRef<MapRef>(null);
 
-  const onMove = (event: any) => {
+  const onMove = (event: {
+    longitude: number;
+    latitude: number;
+    zoom?: number;
+  }) => {
     mapRef.current?.flyTo({
       center: [event.longitude, event.latitude],
-      zoom: 14,
+      zoom: event.zoom || 14,
       duration: 1000,
     });
   };
