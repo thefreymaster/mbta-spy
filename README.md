@@ -2,6 +2,9 @@
 
 This project shows the entire MBTA fleet of vehicles on a map, updating in real-time.
 
+<img width="1560" alt="Screen Shot 2022-04-11 at 12 41 04 PM" src="https://user-images.githubusercontent.com/28308815/162789145-1189163a-48e7-4b1f-a2a6-1f345055c57b.png">
+
+
 ## Tech Stack
 - React
 - Mapbox
