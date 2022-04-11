@@ -108,12 +108,13 @@ const LiveMarker = (props: {
   vehicle: any;
   route: Route;
   setLineRoute(s: any): void;
+  onMove(event: any): void;
 }) => {
   const { current: map } = useMap();
   const history = useHistory();
 
   const [vehicle, setVehicle] = React.useState(props.vehicle);
-  const [isAnimating, setIsAnimating]: any = React.useState();
+  const [isAnimating, setIsAnimating]: any = React.useState(false);
   const params: { transit_type: string } = useParams();
 
   React.useEffect(() => {
@@ -133,19 +134,7 @@ const LiveMarker = (props: {
     // };
   }, [params.transit_type, props.vehicle.id]);
 
-  const isInteracting =
-    map?.isMoving() || map?.isEasing() || map?.isRotating() || map?.isZooming();
-
-  console.log(map?.isMoving());
-
   const memorizedMarker = useMemo(() => {
-    console.log({
-      moving: map?.isMoving(),
-      easing: map?.isEasing(),
-      rotating: map?.isRotating(),
-      zooming: map?.isZooming(),
-      map,
-    });
     return (
       <Marker
         longitude={vehicle.attributes.longitude}
@@ -154,7 +143,14 @@ const LiveMarker = (props: {
         style={{
           willChange: "transform",
           // @ts-ignore
-          // transition: `transform ${isInteracting ? 0 : 200}ms ease-in-out`,
+          transition: isAnimating && "transform 200ms ease-in-out",
+        }}
+        onClick={(event: any) => {
+          props.onMove({
+            longitude: vehicle.attributes.longitude,
+            latitude: vehicle.attributes.latitude,
+            zoom: 14
+          });
         }}
       >
         <Link

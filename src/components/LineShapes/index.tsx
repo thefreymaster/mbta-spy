@@ -71,6 +71,7 @@ export const LineShapes = (props: {
   setLineRoute(s: any): void;
   vehicleType: string;
   dataRoutes: any;
+  checked: boolean;
 }) => {
   const params: { transit_type: string; route_id: string; transit_id: string } =
     useParams();
@@ -88,11 +89,11 @@ export const LineShapes = (props: {
   const { isLoading, data } = useQuery(
     ["line-polyline", params.transit_type + params.route_id],
     () =>
-      fetch(`/api/shapes/${getShapesId()}`).then((res) => {
+      fetch(`/api/shapes/${props.checked && getShapesId()}`).then((res) => {
         return res.json();
       }),
     {
-      // enabled: !!params.transit_type || !!params.transit_id,
+      enabled: props.checked,
       retry: false,
       refetchOnMount: false,
       refetchOnReconnect: false,
@@ -138,10 +139,10 @@ export const LineShapes = (props: {
     return (
       <>
         {uniqueShapes?.map((p: any) => {
-          return <Line polyline={p} />;
+          return <Line key={p?.id} polyline={p} />;
         })}
       </>
     );
   }, [data?.shapes?.length, params.transit_type, params.transit_id]);
-  return <>{memorizedShapes}</>;
+  return <>{props.checked ? memorizedShapes : null}</>;
 };

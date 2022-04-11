@@ -13,7 +13,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AppShell
-        sx={{ padding: "0px !important" }}
+        sx={{ padding: "0px !important", minHeight: "100%" }}
         header={
           <Header
             style={{
