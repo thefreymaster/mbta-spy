@@ -5,6 +5,7 @@ import { LiveMap } from "./components/LiveMap";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { AppShell, Box, Header, Space, Title } from "@mantine/core";
 import { IoTrain } from "react-icons/io5";
+import Router from "./routes";
 
 const queryClient = new QueryClient();
 
@@ -12,7 +13,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AppShell
-        sx={{ padding: "0px !important" }}
+        sx={{ padding: "0px !important", minHeight: "100%" }}
         header={
           <Header
             style={{
@@ -36,11 +37,11 @@ const App = () => {
               }}
             />
             <Space w="sm" />
-            <Title order={6}>Boston Transit Tracker</Title>
+            <Title order={6}>MBTA Spy</Title>
           </Header>
         }
       >
-        <LiveMap />
+        <Router />
       </AppShell>
     </QueryClientProvider>
   );

@@ -7,12 +7,20 @@ import {
   MdDirectionsRailway,
   MdOutlineDirectionsBus,
 } from "react-icons/md";
+import { useHistory, useParams } from "react-router-dom";
+
+const transitTypes = new Map();
+transitTypes.set("0", "lite-rail");
+transitTypes.set("1", "subway");
+transitTypes.set("2", "commuter-rail");
+transitTypes.set("3", "bus");
 
 const data = [
   {
     image: "https://img.icons8.com/clouds/256/000000/futurama-bender.png",
     label: "Lite Rail",
     value: "0",
+    route: "lite-rail",
     icon: <MdTram />,
   },
 
@@ -20,20 +28,23 @@ const data = [
     image: "https://img.icons8.com/clouds/256/000000/futurama-mom.png",
     label: "Subway",
     value: "1",
+    route: "subway",
     icon: <MdDirectionsSubway />,
   },
   {
     image: "https://img.icons8.com/clouds/256/000000/homer-simpson.png",
     label: "Commuter Rail",
     value: "2",
+    route: "commuter-rail",
     icon: <MdDirectionsRailway />,
   },
-  {
-    image: "https://img.icons8.com/clouds/256/000000/spongebob-squarepants.png",
-    label: "Bus",
-    value: "3",
-    icon: <MdOutlineDirectionsBus />,
-  },
+  // {
+  //   image: "https://img.icons8.com/clouds/256/000000/spongebob-squarepants.png",
+  //   label: "Bus",
+  //   value: "3",
+  //   route: "bus",
+  //   icon: <MdOutlineDirectionsBus />,
+  // },
 ];
 
 interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
@@ -66,14 +77,30 @@ const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
   }
 );
 
-export const VehicleType = () => {
+export const VehicleType = (props: {
+  setVehicleType: any;
+  vehicleType: string;
+}) => {
+  const history = useHistory();
+  const params: { transit_type: string } = useParams();
   return (
     <Select
-      sx={{ position: "absolute", top: 20, left: 20, zIndex: 100 }}
-      placeholder="Vehicle Type"
+      clearable
+      allowDeselect
+      sx={{ position: "absolute", top: 75, left: 20, zIndex: 100 }}
+      placeholder="Line Type"
       itemComponent={SelectItem}
+      value={params?.transit_type}
+      onChange={(value: any) => {
+        // props.setVehicleType();
+        if (value) {
+          history.push(`/${value}`);
+        } else {
+          history.push("/");
+        }
+      }}
       data={data}
-      searchable
+      searchable={false}
       maxDropdownHeight={400}
       nothingFound="Nobody here"
       filter={(value, item: any) =>
