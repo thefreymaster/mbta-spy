@@ -1,6 +1,13 @@
-# Getting Started with Create React App
+# MBTA Spy
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project shows the entire MBTA fleet of vehicles on a map, updating in real-time.
+
+## Tech Stack
+- React
+- Mapbox
+- Express
+- Websockets
+- Server Sent Events
 
 ## Available Scripts
 
