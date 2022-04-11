@@ -122,10 +122,10 @@ const LiveMarker = (props: {
       const parsed = JSON.parse(data);
       if (parsed.id === props.vehicle.id) {
         setVehicle(parsed);
-        setIsAnimating(true);
-        setTimeout(() => {
-          setIsAnimating(false);
-        }, 100);
+        // setIsAnimating(true);
+        // setTimeout(() => {
+        //   setIsAnimating(false);
+        // }, 100);
       }
     });
 
@@ -143,7 +143,7 @@ const LiveMarker = (props: {
         style={{
           willChange: "transform",
           // @ts-ignore
-          transition: isAnimating && "transform 100ms ease-in-out",
+          // transition: isAnimating && "transform 100ms ease-in-out",
         }}
         onClick={(event: any) => {
           props.onMove({
