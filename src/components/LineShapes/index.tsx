@@ -92,7 +92,12 @@ export const LineShapes = (props: {
     }
     return props.shapeIds;
   };
-  const renderLines = !!params.transit_type || props.checked;
+  debugger;
+  const renderLines =
+    params?.transit_type === "3"
+      ? false
+      : !!params.transit_type || props.checked;
+
   const { isLoading, data } = useQuery(
     ["line-polyline", params.transit_type + params.route_id],
     () =>

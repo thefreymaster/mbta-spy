@@ -20,10 +20,20 @@ const DEFAULT_LONGITUDE = -71.06388;
 export const DEFAULT_TRANSIT_TYPES = "0,1,2";
 
 const MapContent = (props: { onMove(event: any): void }) => {
-  const [checked, setChecked]: any = React.useState(false);
+  const params: { transit_type: string } = useParams();
+
+  // const getCheckedStatus = () => {
+  //   if (params?.transit_type === "3") {
+  //     return false;
+  //   }
+  //   return false;
+  // };
+
+  const [checked, setChecked]: any = React.useState(
+    params?.transit_type === "3" ? false : true
+  );
   const [lineRoute, setLineRoute]: any = React.useState();
   const [vehicleType, setVehicleType] = React.useState("");
-  const params: { transit_type: string } = useParams();
 
   const { isLoading, isError, error, data } = useQuery(
     ["vehicles", params?.transit_type],
@@ -41,20 +51,20 @@ const MapContent = (props: { onMove(event: any): void }) => {
     }
   );
 
-  const { isLoading: isLoadingBus, data: busData } = useQuery(
-    ["vehicles", "bus"],
-    () =>
-      fetch(`/api/vehicles/3`).then((res) => {
-        return res.json();
-      }),
-    {
-      enabled: !params.transit_type,
-      retry: false,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-    }
-  );
+  // const { isLoading: isLoadingBus, data: busData } = useQuery(
+  //   ["vehicles", "bus"],
+  //   () =>
+  //     fetch(`/api/vehicles/3`).then((res) => {
+  //       return res.json();
+  //     }),
+  //   {
+  //     enabled: !params.transit_type,
+  //     retry: false,
+  //     refetchOnMount: false,
+  //     refetchOnReconnect: false,
+  //     refetchOnWindowFocus: false,
+  //   }
+  // );
 
   const getRouteIds = () => {
     const ids = data?.vehicles?.reduce((accumulator: string, vehicle: any) => {
@@ -85,7 +95,7 @@ const MapContent = (props: { onMove(event: any): void }) => {
     }
   );
 
-  if (isLoading || isLoadingRoutes || isLoadingBus) {
+  if (isLoading || isLoadingRoutes) {
     return (
       <Center style={{ height: "100vh", width: "100vw" }}>
         <Loader color="red" size="xl" />
@@ -98,13 +108,15 @@ const MapContent = (props: { onMove(event: any): void }) => {
   }
   let allVehicles = data?.vehicles;
   if (!params?.transit_type) {
-    allVehicles = [...data?.vehicles, ...busData?.vehicles];
+    // allVehicles = [...data?.vehicles, ...busData?.vehicles];
+    allVehicles = [...data?.vehicles];
   }
   return (
     <>
       <Switch
         checked={checked}
         onChange={(event) => setChecked(event.currentTarget.checked)}
+        disabled={params?.transit_type === "3"}
         onLabel="ON"
         offLabel="OFF"
         color="orange"
@@ -130,7 +142,7 @@ const MapContent = (props: { onMove(event: any): void }) => {
         lineRoute={lineRoute}
         setLineRoute={setLineRoute}
         dataRoutes={dataRoutes}
-        checked={checked}
+        checked={params?.transit_type === "3" ? false : checked}
       />
       {allVehicles.map((vehicle: any) => {
         return (

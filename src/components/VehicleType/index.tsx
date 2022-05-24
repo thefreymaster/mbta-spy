@@ -17,7 +17,6 @@ transitTypes.set("3", "bus");
 
 const data = [
   {
-    image: "https://img.icons8.com/clouds/256/000000/futurama-bender.png",
     label: "Lite Rail",
     value: "0",
     route: "lite-rail",
@@ -25,30 +24,26 @@ const data = [
   },
 
   {
-    image: "https://img.icons8.com/clouds/256/000000/futurama-mom.png",
     label: "Subway",
     value: "1",
     route: "subway",
     icon: <MdDirectionsSubway />,
   },
   {
-    image: "https://img.icons8.com/clouds/256/000000/homer-simpson.png",
     label: "Commuter Rail",
     value: "2",
     route: "commuter-rail",
     icon: <MdDirectionsRailway />,
   },
-  // {
-  //   image: "https://img.icons8.com/clouds/256/000000/spongebob-squarepants.png",
-  //   label: "Bus",
-  //   value: "3",
-  //   route: "bus",
-  //   icon: <MdOutlineDirectionsBus />,
-  // },
+  {
+    label: "Bus",
+    value: "3",
+    route: "bus",
+    icon: <MdOutlineDirectionsBus />,
+  },
 ];
 
 interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
-  image: string;
   label: string;
   description: string;
   icon: React.ReactNode;
@@ -62,7 +57,7 @@ const getTransitType = (value: number) => {
 };
 
 const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
-  ({ image, label, description, ...others }: ItemProps, ref) => {
+  ({ label, description, ...others }: ItemProps, ref) => {
     return (
       <div ref={ref} {...others}>
         <Group noWrap>
