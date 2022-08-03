@@ -12,6 +12,7 @@ import { Box } from "@mantine/core";
 import { Route } from "../../interfaces";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { TransitIcons } from "../Icons/index";
+import { IoTrain } from "react-icons/io5";
 
 const socket = io(window.location.origin);
 
@@ -100,6 +101,26 @@ export const TransitIcon = (props: {
       />
     </Box>
   );
+  transitTypes.set(
+    4,
+    <Box
+      style={{ padding: 3 }}
+      sx={(theme) => ({
+        boxShadow: theme.shadows.xl,
+        "&:hover": {
+          boxShadow: theme.shadows.lg,
+        },
+        ...props.containerStyle,
+      })}
+      onClick={props.onClick}
+    >
+      <IoTrain
+        className="marker"
+        style={{ ...props.style }}
+        color={props.color ?? "white"}
+      />
+    </Box>
+  );
 
   return <>{transitTypes.get(props.value) ?? transitTypes.get(0)}</>;
 };
@@ -149,7 +170,7 @@ const LiveMarker = (props: {
           props.onMove({
             longitude: vehicle.attributes.longitude,
             latitude: vehicle.attributes.latitude,
-            zoom: 14
+            zoom: 14,
           });
         }}
       >

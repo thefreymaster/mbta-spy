@@ -18,4 +18,5 @@ main {
 
 .drawer {
   overflow-y: scroll;
+  padding   : 0px;
 }

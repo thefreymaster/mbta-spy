@@ -3,8 +3,6 @@ import React from "react";
 import { Layer, Source } from "react-map-gl";
 import { useQuery } from "react-query";
 import { useLocation, useParams } from "react-router-dom";
-import simplify from "simplify-geometry";
-import * as turf from "@turf/turf";
 
 const transitTypeColors = new Map();
 transitTypeColors.set("0", "00843d");
@@ -92,7 +90,12 @@ export const LineShapes = (props: {
     }
     return props.shapeIds;
   };
-  const renderLines = !!params.transit_type || props.checked;
+
+  const renderLines =
+    params?.transit_type === "3"
+      ? false
+      : !!params.transit_type || props.checked;
+
   const { isLoading, data } = useQuery(
     ["line-polyline", params.transit_type + params.route_id],
     () =>

@@ -4,6 +4,7 @@ import {
   Badge,
   Box,
   Center,
+  Dialog,
   Drawer,
   Loader,
   Space,
@@ -11,68 +12,62 @@ import {
   Timeline,
   Title,
 } from "@mantine/core";
-import { useQueryClient } from "react-query";
 import { isDesktop } from "react-device-detect";
 import { TransitIcon } from "../LiveMarker";
 import { useQuery } from "react-query";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
-import { Route } from "../../interfaces";
+import Pulse from "../../common/Pulse";
+import { VehicleInformationDialog } from "../VehicleInformation/index";
 
 const socket = io(window.location.origin);
 
-const DrawerTitle = (props: {
+export const TransitTitle = (props: {
   type: number;
-  title: string;
   color: string;
   label: string;
+  description?: string;
 }) => {
   return (
     <Box
       sx={() => ({
         display: "flex",
         flexDirection: "row",
-        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: `#${props?.color}`,
+        color: "white",
+        borderRadius: "100px 20px 100px 100px",
+        padding: "0px 20px 0px 0px",
       })}
     >
-      <Box
+      <Avatar radius="xl" style={{ border: `3px solid #${props.color}` }}>
+        <TransitIcon
+          value={props.type}
+          color={props.color}
+          style={{ display: "flex" }}
+        />
+      </Avatar>
+      <Title
         sx={() => ({
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
+          marginLeft: 5,
+          minWidth: "40px",
         })}
+        order={6}
       >
-        <Avatar radius="xl" style={{ border: `3px solid #${props.color}` }}>
-          <TransitIcon
-            value={props?.type}
-            color={props.color}
-            style={{ display: "flex" }}
-          />
-        </Avatar>
-      </Box>
-      <Space w={5} />
-      <Box
+        {props.label}
+      </Title>
+      <Title
         sx={() => ({
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
+          marginLeft: 5,
+          textOverflow: "ellipsis",
+          overflow: "hidden",
+          whiteSpace: "nowrap",
+          maxWidth: "160px",
         })}
+        order={6}
       >
-        <Title
-          sx={() => ({
-            color: `#${props.color}`,
-            marginRight: "4px",
-            paddingRight: "4px",
-            borderRight: `2px solid #${props.color}`,
-          })}
-          order={6}
-        >
-          {props.label}
-        </Title>
-        <Title sx={() => ({ color: `#${props.color}` })} order={6}>
-          {props.type}
-        </Title>
-      </Box>
+        {props.description}
+      </Title>
     </Box>
   );
 };
@@ -130,6 +125,9 @@ export const LineDrawer = (props: {
     }
   );
 
+  const stops = data?.stops;
+  const direction = location?.state?.vehicle.attributes?.direction_id;
+
   const currentStopIndex =
     getCurrentStopIndex(
       location?.state?.vehicle?.relationships?.stop?.data?.id,
@@ -148,11 +146,11 @@ export const LineDrawer = (props: {
         history.push("/");
       }}
       title={
-        <DrawerTitle
+        <TransitTitle
           color={location?.state?.route?.attributes?.color}
-          title={props?.lineRoute?.route?.attributes?.long_name}
           label={location?.state?.vehicle?.attributes?.label}
-          type={
+          type={location?.state?.route?.attributes?.type}
+          description={
             location?.state?.route?.attributes?.short_name === ""
               ? location?.state?.route?.attributes?.long_name
               : location?.state?.route?.attributes?.short_name
@@ -164,6 +162,21 @@ export const LineDrawer = (props: {
       position="right"
       withOverlay={false}
       sx={() => ({ overflow: "scroll" })}
+      styles={() => ({
+        drawer: {
+          borderRadius: "20px",
+          margin: "20px",
+        },
+        header: {
+          padding: "18px",
+          position: "sticky",
+          top: "0px",
+          zIndex: 100,
+          backgroundColor: "white",
+          boxShadow:
+            "0 1px 3px rgb(0 0 0 / 5%), rgb(0 0 0 / 5%) 0px 20px 25px -5px, rgb(0 0 0 / 4%) 0px 10px 10px -5px",
+        },
+      })}
       className="drawer"
     >
       {isLoading ? (
@@ -172,27 +185,44 @@ export const LineDrawer = (props: {
         </Center>
       ) : (
         <>
-          <Badge
-            fullWidth
-            style={{
-              backgroundColor: `#${location?.state?.route?.attributes?.color}`,
-              color: "white",
-            }}
-          >
-            {location?.state?.route.attributes.description}
-          </Badge>
           <Space h="md" />
-          <Timeline active={currentStopIndex} bulletSize={24} lineWidth={2}>
+          <Timeline
+            reverseActive={direction === 1}
+            active={
+              direction === 0
+                ? currentStopIndex
+                : stops?.length - currentStopIndex - 1
+            }
+            bulletSize={24}
+            lineWidth={2}
+            sx={() => ({
+              padding: "0px 32px 32px 32px",
+            })}
+          >
             {data?.stops?.map((stop: any, index: number) => {
               return (
                 <Timeline.Item
                   lineVariant={index === currentStopIndex ? "dashed" : "solid"}
                   color="gray"
                   bullet={
-                    <TransitIcon
-                      value={location?.state?.route?.attributes?.type}
-                      style={{ display: "flex" }}
-                    />
+                    <Box>
+                      {currentStopIndex === index && (
+                        <Pulse
+                          color={location?.state?.route?.attributes?.color}
+                        />
+                      )}
+                      <TransitIcon
+                        value={location?.state?.route?.attributes?.type}
+                        style={{ display: "flex" }}
+                        onClick={() =>
+                          props.onMove({
+                            longitude: stop.attributes.longitude,
+                            latitude: stop.attributes.latitude,
+                            zoom: 14,
+                          })
+                        }
+                      />
+                    </Box>
                   }
                   title={stop?.attributes?.name}
                 >
@@ -205,6 +235,7 @@ export const LineDrawer = (props: {
           </Timeline>
         </>
       )}
+      {/* <VehicleInformationDialog /> */}
     </Drawer>
   );
 };
