@@ -218,7 +218,7 @@ export const LineDrawer = (props: {
                           props.onMove({
                             longitude: stop.attributes.longitude,
                             latitude: stop.attributes.latitude,
-                            zoom: 16,
+                            zoom: 14,
                           })
                         }
                       />
