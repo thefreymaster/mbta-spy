@@ -3,8 +3,6 @@ import React from "react";
 import { Layer, Source } from "react-map-gl";
 import { useQuery } from "react-query";
 import { useLocation, useParams } from "react-router-dom";
-import simplify from "simplify-geometry";
-import * as turf from "@turf/turf";
 
 const transitTypeColors = new Map();
 transitTypeColors.set("0", "00843d");
@@ -92,7 +90,7 @@ export const LineShapes = (props: {
     }
     return props.shapeIds;
   };
-  debugger;
+
   const renderLines =
     params?.transit_type === "3"
       ? false

@@ -8,6 +8,7 @@ import { IoTrain } from "react-icons/io5";
 import { AiOutlineGithub } from "react-icons/ai";
 
 import Router from "./routes";
+import { TransitTitle } from "./components/LineDrawer";
 
 const queryClient = new QueryClient();
 
@@ -33,7 +34,8 @@ const App = () => {
             p="xs"
             pl="lg"
           >
-            <IoTrain
+            <TransitTitle type={4} color="000000" label="MBTA Spy" />
+            {/* <IoTrain
               style={{
                 border: "3px solid",
                 borderRadius: "100px",
@@ -41,7 +43,7 @@ const App = () => {
               }}
             />
             <Space w="sm" />
-            <Title order={6}>MBTA Spy</Title>
+            <Title order={6}>MBTA Spy</Title> */}
             <Space sx={{ flexGrow: 1 }} />
             <ActionIcon<"a">
               component="a"

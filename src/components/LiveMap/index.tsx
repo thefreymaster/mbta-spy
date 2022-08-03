@@ -12,6 +12,7 @@ import { VehicleType } from "../VehicleType/index";
 import { useParams } from "react-router-dom";
 
 import "./live-map.css";
+import { LineStops } from "../LineStops";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAP_BOX_TOKEN || "";
 
@@ -144,6 +145,7 @@ const MapContent = (props: { onMove(event: any): void }) => {
         dataRoutes={dataRoutes}
         checked={params?.transit_type === "3" ? false : checked}
       />
+      <LineStops />
       {allVehicles.map((vehicle: any) => {
         return (
           <div key={`marker-${vehicle.id}`}>
@@ -173,7 +175,7 @@ export const LiveMap = () => {
     mapRef.current?.flyTo({
       center: [event.longitude, event.latitude],
       zoom: event.zoom || 14,
-      duration: 1000,
+      duration: 2500,
     });
   };
 
