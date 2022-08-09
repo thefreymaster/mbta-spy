@@ -19,7 +19,7 @@ export const Stop = (props: { id: string; stop: any }) => {
     return "a5a5a5";
   };
 
-  const memorizedLine = React.useMemo(() => {
+  const memorizedStop = React.useMemo(() => {
     return (
       <Source
         id={`polyline-${props.id}`}
@@ -51,7 +51,7 @@ export const Stop = (props: { id: string; stop: any }) => {
       </Source>
     );
   }, [location?.state?.route?.attributes?.color, props.id]);
-  return <>{memorizedLine}</>;
+  return <>{memorizedStop}</>;
 };
 
 export const LineStops = () => {
@@ -59,7 +59,7 @@ export const LineStops = () => {
     useParams();
   const { data }: any = useQuery(["stops", params.route_id]);
 
-  if (data?.stops) {
+  if (data?.stops?.length > 0) {
     return (
       <>
         {data?.stops.map((stop: any) => {

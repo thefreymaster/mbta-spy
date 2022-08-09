@@ -8,7 +8,7 @@ import { IoTrain } from "react-icons/io5";
 import { AiOutlineGithub } from "react-icons/ai";
 
 import Router from "./routes";
-import { TransitTitle } from "./components/LineDrawer";
+import { TransitTitle } from "./common/TransitTitle";
 
 const queryClient = new QueryClient();
 

@@ -176,7 +176,7 @@ const LiveMarker = (props: {
       >
         <Link
           to={{
-            pathname: `/${props?.route?.attributes?.type}/${props?.route?.id}/${props.vehicle.id}`,
+            pathname: `/${props?.route?.attributes?.type}/${props?.route?.id}/${props.vehicle.id}/${props.vehicle?.relationships?.trip?.data?.id}`,
             state: { route: props.route, vehicle: vehicle },
           }}
         >

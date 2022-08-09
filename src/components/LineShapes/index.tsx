@@ -111,22 +111,6 @@ export const LineShapes = (props: {
     }
   );
 
-  // data?.shapes.map((currentValue: any) => {
-  //   console.log(
-  //     simplify(getCoordinates(currentValue?.attributes?.polyline), 0.01)
-  //   );
-  // });
-
-  // const total = data?.shapes.reduce((prevValue: any, currentValue: any) => {
-  //   let newTotal;
-  //   newTotal =
-  //     prevValue +
-  //     simplify(getCoordinates(currentValue?.attributes?.polyline), 0.01)
-  //       ?.length;
-
-  //   return newTotal;
-  // }, 0);
-
   const parsedShapes = data?.shapes.map((shape: any) => ({
     ...shape,
     length: getCoordinates(shape.attributes.polyline)?.length,

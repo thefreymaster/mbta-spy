@@ -44,6 +44,16 @@ app.get("/api/routes", async (req, res) => {
   return res.send({ routes: routes.data });
 });
 
+app.get("/api/routes/:route_id", async (req, res) => {
+  const { route_id } = req.params;
+
+  const response = await axios.get(
+    `https://api-v3.mbta.com/routes/${route_id}?api_key=${process.env.MBTA_TOKEN}`
+  );
+  const route = response.data;
+  return res.send({ route: route.data });
+});
+
 app.get("/api/shapes/:shapeId", async (req, res) => {
   const response = await axios.get(
     `https://api-v3.mbta.com/shapes?include=route&filter%5Broute%5D=${req.params.shapeId}`
@@ -69,6 +79,45 @@ app.get("/api/stops/:stop_id", async (req, res) => {
   );
   const stops = response.data;
   return res.send({ stops: stops.data });
+});
+
+app.get("/api/predictions/:route_id/:trip_id", async (req, res) => {
+  const { route_id, trip_id } = req.params;
+
+  const response = await axios.get(
+    `https://api-v3.mbta.com/predictions?include=stop&filter%5Broute%5D=${route_id}&filter%5Btrip%5D=${trip_id}&api_key=${process.env.MBTA_TOKEN}`
+  );
+  const predictions = response.data;
+  const included = response.data.included.reverse();
+
+  const newPredictions = predictions.data.reduce(
+    (collector, prediction, index) => {
+      const [stop] = included.filter(
+        (include) => include.id === prediction?.relationships?.stop?.data?.id
+      );
+      const combined = {
+        attributes: {
+          departure_time: prediction?.attributes?.departure_time,
+          arrival_time: prediction?.attributes?.arrival_time,
+          platform_name: stop?.attributes?.name,
+          latitude: stop?.attributes?.latitude,
+          longitude: stop?.attributes?.longitude,
+        },
+        id: prediction?.id,
+        relationships: {
+          ...prediction.relationships,
+        },
+      };
+      collector.push(combined);
+      return collector;
+    },
+    []
+  );
+
+  return res.send({
+    predictions: predictions.data,
+    combined: newPredictions,
+  });
 });
 
 app.get("/*", function (request, response) {
