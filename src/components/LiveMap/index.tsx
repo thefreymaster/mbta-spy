@@ -102,7 +102,7 @@ const MapContent = (props: {
         lineDrawerIsOpen={lineDrawerIsOpen}
         setLineDrawerIsOpen={setLineDrawerIsOpen}
       />
-      {params?.transit_type && params?.route_id && params?.transit_id && (
+      {(params?.transit_type && params?.route_id && params?.transit_id) && (
         <LinesDrawerToggle setLineDrawerIsOpen={setLineDrawerIsOpen} />
       )}
       <LineShapes
