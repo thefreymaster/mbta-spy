@@ -3,6 +3,8 @@ import React from "react";
 import { useQuery } from "react-query";
 import { useLocation, useParams } from "react-router-dom";
 import { getCurrentStopIndex } from "../../utils/getCurrentStopIndex";
+import { isDesktop } from "react-device-detect";
+import { isMobile } from "react-device-detect";
 
 interface IPrediction {
   id: string;
@@ -80,8 +82,6 @@ export const Predictions = (props: {
     }
   );
 
-  console.log({ data });
-
   const vehicleStopId = location?.state?.vehicle?.relationships?.stop?.data?.id;
 
   const [showPredictions, setShowPredictions] = React.useState(false);
@@ -108,50 +108,30 @@ export const Predictions = (props: {
             bottom: "20px",
             left: "20px",
             borderColor: `#${props.color}`,
-            color: `#${props.color}`
+            color: `#${props.color}`,
           })}
           onClick={() => setShowPredictions(true)}
         >
-          Schedule
+          Predictions
         </Button>
       </Box>
       {showPredictions && (
         <Dialog
-          position={{ bottom: 20, left: 20 }}
+          position={{ bottom: 20, left: isMobile ? "10px" : "20px" }}
+          style={{maxWidth: "calc(100% - 40px)"}}
           opened
           onClose={() => setShowPredictions(false)}
           size="lg"
           radius="md"
           withCloseButton
         >
-          {/* {props.direction && (
-        <Badge
-          sx={() => ({
-            backgroundColor: `#${props.color}`,
-            borderRadius: "100px 20px 100px 100px",
-            marginRight: "10px",
-          })}
-          variant="filled"
-        >
-          {props.direction} Bound
-        </Badge>
-      )}
-      <Badge
-        sx={() => ({
-          backgroundColor: `#${props.color}`,
-          borderRadius: "100px 20px 100px 100px",
-        })}
-        variant="filled"
-      >
-        Commuter Rail
-      </Badge> */}
           <Table highlightOnHover captionSide="bottom">
             <caption>Predicted times</caption>
             <thead>
               <tr>
                 <th>Platform</th>
                 <th>Arrival</th>
-                <th>Departure</th>
+                {isDesktop && <th>Departure</th>}
               </tr>
             </thead>
             <tbody>
@@ -182,14 +162,16 @@ export const Predictions = (props: {
                       <Time>{prediction.attributes.arrival_time}</Time>
                     </ActiveText>
                   </td>
-                  <td>
-                    <ActiveText
-                      predictionStopId={prediction.relationships.stop.data.id}
-                      vehicleStopId={vehicleStopId}
-                    >
-                      <Time>{prediction.attributes.departure_time}</Time>
-                    </ActiveText>
-                  </td>
+                  {isDesktop && (
+                    <td>
+                      <ActiveText
+                        predictionStopId={prediction.relationships.stop.data.id}
+                        vehicleStopId={vehicleStopId}
+                      >
+                        <Time>{prediction.attributes.departure_time}</Time>
+                      </ActiveText>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

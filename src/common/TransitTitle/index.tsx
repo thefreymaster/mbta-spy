@@ -18,10 +18,10 @@ export const TransitTitle = (props: {
           backgroundColor: `#${props?.color}`,
           color: "white",
           borderRadius: "100px 20px 100px 100px",
-          padding: "0px 20px 0px 0px",
+          padding: "3px 20px 3px 3px",
         })}
       >
-        <Avatar radius="xl" style={{ border: `3px solid #${props.color}` }}>
+        <Avatar radius="xl" >
           <TransitIcon
             value={props.type}
             color={props.color}

@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 
 import "./live-map.css";
 import { LineStops } from "../LineStops";
+import { LinesToggle } from "../LinesToggle";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAP_BOX_TOKEN || "";
 
@@ -20,19 +21,11 @@ const DEFAULT_LATITUDE = 42.35698;
 const DEFAULT_LONGITUDE = -71.06388;
 export const DEFAULT_TRANSIT_TYPES = "0,1,2";
 
-const MapContent = (props: { onMove(event: any): void }) => {
+const MapContent = (props: {
+  onMove(event: any): void;
+  linesVisible: boolean;
+}) => {
   const params: { transit_type: string } = useParams();
-
-  // const getCheckedStatus = () => {
-  //   if (params?.transit_type === "3") {
-  //     return false;
-  //   }
-  //   return false;
-  // };
-
-  const [checked, setChecked]: any = React.useState(
-    params?.transit_type === "3" ? false : true
-  );
   const [lineRoute, setLineRoute]: any = React.useState();
   const [vehicleType, setVehicleType] = React.useState("");
 
@@ -51,21 +44,6 @@ const MapContent = (props: { onMove(event: any): void }) => {
       refetchOnWindowFocus: false,
     }
   );
-
-  // const { isLoading: isLoadingBus, data: busData } = useQuery(
-  //   ["vehicles", "bus"],
-  //   () =>
-  //     fetch(`/api/vehicles/3`).then((res) => {
-  //       return res.json();
-  //     }),
-  //   {
-  //     enabled: !params.transit_type,
-  //     retry: false,
-  //     refetchOnMount: false,
-  //     refetchOnReconnect: false,
-  //     refetchOnWindowFocus: false,
-  //   }
-  // );
 
   const getRouteIds = () => {
     const ids = data?.vehicles?.reduce((accumulator: string, vehicle: any) => {
@@ -114,36 +92,18 @@ const MapContent = (props: { onMove(event: any): void }) => {
   }
   return (
     <>
-      <Switch
-        checked={checked}
-        onChange={(event) => setChecked(event.currentTarget.checked)}
-        disabled={params?.transit_type === "3"}
-        onLabel="ON"
-        offLabel="OFF"
-        color="orange"
-        sx={{
-          root: { minWidth: 200 },
-          position: "absolute",
-          top: 75,
-          right: 20,
-          zIndex: 100,
-        }}
-        size="lg"
-      />
-      ;
       <LineDrawer
         onMove={props.onMove}
         lineRoute={lineRoute}
         setLineRoute={setLineRoute}
       />
-      <VehicleType vehicleType={vehicleType} setVehicleType={setVehicleType} />
       <LineShapes
         vehicleType={vehicleType}
         shapeIds={getRouteIds()}
         lineRoute={lineRoute}
         setLineRoute={setLineRoute}
         dataRoutes={dataRoutes}
-        checked={params?.transit_type === "3" ? false : checked}
+        checked={props.linesVisible}
       />
       <LineStops />
       {allVehicles.map((vehicle: any) => {
@@ -166,6 +126,9 @@ const MapContent = (props: { onMove(event: any): void }) => {
 
 export const LiveMap = () => {
   const mapRef = useRef<MapRef>(null);
+  const params: { transit_type: string } = useParams();
+
+  const [linesVisible, setLinesVisible]: any = React.useState(true);
 
   const onMove = (event: {
     longitude: number;
@@ -185,6 +148,11 @@ export const LiveMap = () => {
       className="map-container"
       // style={{ width: "100vw", height: "100vh" }}
     >
+      <VehicleType />
+      <LinesToggle
+        setLinesVisible={setLinesVisible}
+        linesVisible={linesVisible}
+      />
       <Map
         ref={mapRef}
         initialViewState={{
@@ -197,7 +165,7 @@ export const LiveMap = () => {
         style={{ width: "100vw", height: "100vh" }}
         mapStyle="mapbox://styles/thefreymaster/ckrgryqok3xbu17okr3jnftem?optimize=true"
       >
-        <MapContent onMove={onMove} />
+        <MapContent onMove={onMove} linesVisible={linesVisible} />
       </Map>
     </div>
   );

@@ -16,7 +16,7 @@ import { io } from "socket.io-client";
 import Pulse from "../../common/Pulse";
 import { TransitTitle } from "../../common/TransitTitle";
 import { getCurrentStopIndex } from "../../utils/getCurrentStopIndex";
-import { Predictions } from '../Predictions';
+import { Predictions } from "../Predictions";
 
 const socket = io(window.location.origin);
 
@@ -105,14 +105,14 @@ export const LineDrawer = (props: {
 
   return (
     <Drawer
-      opened={!!params.transit_id && isDesktop}
+      opened={!!params.transit_id}
       onClose={() => {
         props.onMove({
           longitude: location?.state?.vehicle.attributes.longitude,
           latitude: location?.state?.vehicle.attributes.latitude,
           zoom: 13,
         });
-        history.push("/");
+        history.push(`/${params.transit_type}`);
       }}
       title={
         <TransitTitle
@@ -159,39 +159,32 @@ export const LineDrawer = (props: {
           <Timeline
             reverseActive={getReverseActiveState()}
             active={getActiveState()}
-            bulletSize={24}
+            bulletSize={16}
             lineWidth={2}
             sx={() => ({
               padding: "0px 32px 32px 32px",
+              "&:hover": {
+                cursor: "pointer",
+              },
             })}
           >
             {data?.stops?.map((stop: any, index: number) => {
               return (
                 <Timeline.Item
                   lineVariant={index === currentStopIndex ? "dashed" : "solid"}
-                  color="gray"
-                  bullet={
-                    <Box>
-                      {currentStopIndex === index && (
-                        <Pulse
-                          color={location?.state?.route?.attributes?.color}
-                        />
-                      )}
-                      <TransitIcon
-                        value={location?.state?.route?.attributes?.type}
-                        style={{ display: "flex" }}
-                        onClick={() =>
-                          props.onMove({
-                            longitude: stop.attributes.longitude,
-                            latitude: stop.attributes.latitude,
-                            zoom: 14,
-                          })
-                        }
-                      />
-                    </Box>
+                  onClick={() =>
+                    props.onMove({
+                      longitude: stop.attributes.longitude,
+                      latitude: stop.attributes.latitude,
+                      zoom: 14,
+                    })
                   }
+                  color="gray"
                   title={stop?.attributes?.name}
                 >
+                  {currentStopIndex === index && (
+                    <Pulse color={location?.state?.route?.attributes?.color} />
+                  )}
                   <Text size="xs" color="dimmed">
                     {stop?.attributes?.address}
                   </Text>

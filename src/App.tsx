@@ -24,37 +24,17 @@ const App = () => {
             style={{
               position: "fixed",
               top: 0,
-              backdropFilter: "blur(4px)",
-              WebkitBackdropFilter: "blur(4px)",
               backgroundColor: "transparent",
               display: "flex",
               alignItems: "center",
+              borderBottom: "0px"
             }}
             height={60}
             p="xs"
             pl="lg"
           >
             <TransitTitle type={4} color="000000" label="MBTA Spy" />
-            {/* <IoTrain
-              style={{
-                border: "3px solid",
-                borderRadius: "100px",
-                padding: "5px",
-              }}
-            />
-            <Space w="sm" />
-            <Title order={6}>MBTA Spy</Title> */}
             <Space sx={{ flexGrow: 1 }} />
-            <ActionIcon<"a">
-              component="a"
-              href="https://github.com/thefreymaster/mbta-spy"
-              ref={ref}
-              aria-label="github"
-              size="lg"
-              target="_blank"
-            >
-              <AiOutlineGithub size="24px" />
-            </ActionIcon>
           </Header>
         }
       >

@@ -29,7 +29,7 @@
     width           : 1px;
     position        : absolute;
     top             : -5px;
-    left            : -5px;
+    left            : -15px;
 }
 
 .pulse:before {

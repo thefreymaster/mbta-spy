@@ -1,13 +1,14 @@
 import React from "react";
-import { forwardRef } from "react";
-import { Group, Text, Select } from "@mantine/core";
+import { Box } from "@mantine/core";
 import {
   MdTram,
   MdDirectionsSubway,
   MdDirectionsRailway,
   MdOutlineDirectionsBus,
+  MdPublic,
 } from "react-icons/md";
 import { useHistory, useParams } from "react-router-dom";
+import { isMobile } from "react-device-detect";
 
 const transitTypes = new Map();
 transitTypes.set("0", "lite-rail");
@@ -43,64 +44,78 @@ const data = [
   },
 ];
 
-interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
-  label: string;
-  description: string;
+const NavIcon = ({
+  value,
+  icon,
+  isIndex,
+}: {
+  value: string;
   icon: React.ReactNode;
-  value: number;
-}
-
-const getTransitType = (value: number) => {
-  const transitTypes = new Map();
-  transitTypes.set(0, <MdTram />);
-  return transitTypes.get(value) ?? transitTypes.get(0);
-};
-
-const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
-  ({ label, description, ...others }: ItemProps, ref) => {
-    return (
-      <div ref={ref} {...others}>
-        <Group noWrap>
-          {others.icon}
-
-          <div>
-            <Text size="sm">{label}</Text>
-          </div>
-        </Group>
-      </div>
-    );
-  }
-);
-
-export const VehicleType = (props: {
-  setVehicleType: any;
-  vehicleType: string;
+  isIndex?: boolean;
 }) => {
   const history = useHistory();
   const params: { transit_type: string } = useParams();
+
   return (
-    <Select
-      clearable
-      allowDeselect
-      sx={{ position: "absolute", top: 75, left: 20, zIndex: 100 }}
-      placeholder="Line Type"
-      itemComponent={SelectItem}
-      value={params?.transit_type}
-      onChange={(value: any) => {
-        // props.setVehicleType();
+    <Box
+      onClick={() => {
         if (value) {
-          history.push(`/${value}`);
-        } else {
-          history.push("/");
+          return history.push(`/${value}`);
         }
+        return history.push("/");
       }}
-      data={data}
-      searchable={false}
-      maxDropdownHeight={400}
-      nothingFound="Nobody here"
-      filter={(value, item: any) =>
-        item.label.toLowerCase().includes(value.toLowerCase().trim())
+      sx={() => ({
+        color:
+          params?.transit_type === value || (isIndex && !params?.transit_type)
+            ? "black"
+            : "white",
+        borderRadius: "100px",
+        width: "40px",
+        height: "40px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor:
+          params?.transit_type === value || (isIndex && !params?.transit_type)
+            ? "white"
+            : "black",
+        transition: "background-color 250ms ease-in-out",
+        "&:hover": {
+          cursor: "pointer",
+        },
+      })}
+    >
+      {icon}
+    </Box>
+  );
+};
+
+export const VehicleType = () => {
+  const position = isMobile
+    ? {
+        bottom: 20,
+        left: 'calc(50% - 100px)',
+        zIndex: 100,
+        display: "flex",
       }
-    />
+    : { top: 75, left: 20, zIndex: 100 };
+
+  return (
+    <Box
+      sx={(theme) => ({
+        position: "absolute",
+        boxShadow: theme.shadows.xl,
+        backgroundColor: "black",
+        padding: "5px",
+        borderRadius: "15px 100px 100px 100px",
+        flexDirection: isMobile ? 'row' : 'column',
+        ...position,
+      })}
+    >
+      <NavIcon value="" icon={<MdPublic />} isIndex />
+      {data.map((type) => (
+        <NavIcon value={type.value} icon={type.icon} />
+      ))}
+    </Box>
   );
 };
