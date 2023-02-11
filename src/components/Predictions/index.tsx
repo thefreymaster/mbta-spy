@@ -118,7 +118,7 @@ export const Predictions = (props: {
       {showPredictions && (
         <Dialog
           position={{ bottom: 20, left: isMobile ? "10px" : "20px" }}
-          style={{maxWidth: "calc(100% - 40px)"}}
+          style={{ maxWidth: "calc(100% - 40px)" }}
           opened
           onClose={() => setShowPredictions(false)}
           size="lg"
@@ -131,7 +131,7 @@ export const Predictions = (props: {
               <tr>
                 <th>Platform</th>
                 <th>Arrival</th>
-                {isDesktop && <th>Departure</th>}
+                <th>Departure</th>
               </tr>
             </thead>
             <tbody>
@@ -155,23 +155,25 @@ export const Predictions = (props: {
                     </ActiveText>
                   </td>
                   <td>
-                    <ActiveText
-                      predictionStopId={prediction.relationships.stop.data.id}
-                      vehicleStopId={vehicleStopId}
-                    >
-                      <Time>{prediction.attributes.arrival_time}</Time>
-                    </ActiveText>
+                    {prediction.attributes.arrival_time && (
+                      <ActiveText
+                        predictionStopId={prediction.relationships.stop.data.id}
+                        vehicleStopId={vehicleStopId}
+                      >
+                        <Time>{prediction.attributes.arrival_time}</Time>
+                      </ActiveText>
+                    )}
                   </td>
-                  {isDesktop && (
-                    <td>
+                  <td>
+                    {prediction.attributes.departure_time && (
                       <ActiveText
                         predictionStopId={prediction.relationships.stop.data.id}
                         vehicleStopId={vehicleStopId}
                       >
                         <Time>{prediction.attributes.departure_time}</Time>
                       </ActiveText>
-                    </td>
-                  )}
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

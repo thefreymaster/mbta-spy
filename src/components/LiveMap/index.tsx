@@ -14,6 +14,7 @@ import { useParams } from "react-router-dom";
 import "./live-map.css";
 import { LineStops } from "../LineStops";
 import { LinesToggle } from "../LinesToggle";
+import { LinesDrawerToggle } from "../LineDrawerToggle";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAP_BOX_TOKEN || "";
 
@@ -25,8 +26,10 @@ const MapContent = (props: {
   onMove(event: any): void;
   linesVisible: boolean;
 }) => {
-  const params: { transit_type: string } = useParams();
+  const params: { transit_type: string; route_id: string; transit_id: string } =
+    useParams();
   const [lineRoute, setLineRoute]: any = React.useState();
+  const [lineDrawerIsOpen, setLineDrawerIsOpen]: any = React.useState(false);
   const [vehicleType, setVehicleType] = React.useState("");
 
   const { isLoading, isError, error, data } = useQuery(
@@ -96,7 +99,12 @@ const MapContent = (props: {
         onMove={props.onMove}
         lineRoute={lineRoute}
         setLineRoute={setLineRoute}
+        lineDrawerIsOpen={lineDrawerIsOpen}
+        setLineDrawerIsOpen={setLineDrawerIsOpen}
       />
+      {params?.transit_type && params?.route_id && params?.transit_id && (
+        <LinesDrawerToggle setLineDrawerIsOpen={setLineDrawerIsOpen} />
+      )}
       <LineShapes
         vehicleType={vehicleType}
         shapeIds={getRouteIds()}

@@ -24,6 +24,8 @@ export const LineDrawer = (props: {
   lineRoute?: any;
   setLineRoute(s: any): void;
   onMove(event: any): void;
+  setLineDrawerIsOpen(event: boolean): void;
+  lineDrawerIsOpen: boolean;
 }) => {
   const history: any = useHistory();
   const location: any = useLocation();
@@ -105,14 +107,18 @@ export const LineDrawer = (props: {
 
   return (
     <Drawer
-      opened={!!params.transit_id}
+      opened={(!!params.transit_id && isDesktop) || props.lineDrawerIsOpen}
       onClose={() => {
-        props.onMove({
-          longitude: location?.state?.vehicle.attributes.longitude,
-          latitude: location?.state?.vehicle.attributes.latitude,
-          zoom: 13,
-        });
-        history.push(`/${params.transit_type}`);
+        if (isDesktop) {
+          props.onMove({
+            longitude: location?.state?.vehicle.attributes.longitude,
+            latitude: location?.state?.vehicle.attributes.latitude,
+            zoom: 13,
+          });
+          history.push(`/${params.transit_type}`);
+        }
+
+        props.setLineDrawerIsOpen(false);
       }}
       title={
         <TransitTitle
