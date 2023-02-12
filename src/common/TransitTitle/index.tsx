@@ -1,4 +1,4 @@
-import { Avatar, Box, Title } from "@mantine/core";
+import { Avatar, Box, Title, useMantineColorScheme } from "@mantine/core";
 import { TransitIcon } from "../../components/LiveMarker";
 
 export const TransitTitle = (props: {
@@ -7,7 +7,10 @@ export const TransitTitle = (props: {
   label: string;
   description?: string;
   onClick?(): void;
+  minWidth?: string;
 }) => {
+  const { colorScheme } = useMantineColorScheme();
+  
   return (
     <>
       <Box
@@ -19,12 +22,13 @@ export const TransitTitle = (props: {
           color: "white",
           borderRadius: "100px 20px 100px 100px",
           padding: "3px 20px 3px 3px",
+          minWidth: props.minWidth,
         })}
       >
         <Avatar radius="xl" >
           <TransitIcon
             value={props.type}
-            color={props.color}
+            color={colorScheme === 'dark' ? "black" : "white"}
             style={{ display: "flex" }}
             onClick={props.onClick}
           />

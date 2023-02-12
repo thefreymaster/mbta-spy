@@ -15,6 +15,8 @@ import "./live-map.css";
 import { LineStops } from "../LineStops";
 import { LinesToggle } from "../LinesToggle";
 import { LinesDrawerToggle } from "../LineDrawerToggle";
+import { isMobile } from "react-device-detect";
+import { DarkModeToggle } from "../../common/DarkModeToggle";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAP_BOX_TOKEN || "";
 
@@ -169,9 +171,13 @@ export const LiveMap = () => {
         setLinesVisible={setLinesVisible}
         linesVisible={linesVisible}
       />
-      {params?.trip_id && params?.route_id && params?.transit_id && (
-        <LinesDrawerToggle setLineDrawerIsOpen={setLineDrawerIsOpen} />
-      )}
+      {params?.trip_id &&
+        params?.route_id &&
+        params?.transit_id &&
+        isMobile && (
+          <LinesDrawerToggle setLineDrawerIsOpen={setLineDrawerIsOpen} />
+        )}
+      {/* <DarkModeToggle /> */}
       <Map
         ref={mapRef}
         initialViewState={{
@@ -182,7 +188,7 @@ export const LiveMap = () => {
         reuseMaps
         mapboxAccessToken={process.env.REACT_APP_MAP_BOX_TOKEN}
         style={{ width: "100vw", height: "100vh" }}
-        mapStyle="mapbox://styles/thefreymaster/ckrgryqok3xbu17okr3jnftem?optimize=true"
+        mapStyle="mapbox://styles/thefreymaster/ckz4a2i2m000r16pquoggwnqp?optimize=true"
       >
         <MapContent
           setLineDrawerIsOpen={setLineDrawerIsOpen}

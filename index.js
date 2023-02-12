@@ -100,8 +100,10 @@ app.get("/api/predictions/:route_id/:trip_id", async (req, res) => {
           departure_time: prediction?.attributes?.departure_time,
           arrival_time: prediction?.attributes?.arrival_time,
           platform_name: stop?.attributes?.name,
+          description: stop?.attributes?.description,
           latitude: stop?.attributes?.latitude,
           longitude: stop?.attributes?.longitude,
+          ...stop,
         },
         id: prediction?.id,
         relationships: {

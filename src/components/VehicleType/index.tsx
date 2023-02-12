@@ -78,7 +78,7 @@ const NavIcon = ({
         backgroundColor:
           params?.transit_type === value || (isIndex && !params?.transit_type)
             ? "white"
-            : "black",
+            : "#1A1B1E",
         transition: "background-color 250ms ease-in-out",
         "&:hover": {
           cursor: "pointer",
@@ -105,7 +105,7 @@ export const VehicleType = () => {
       sx={(theme) => ({
         position: "absolute",
         boxShadow: theme.shadows.xl,
-        backgroundColor: "black",
+        backgroundColor: "#1A1B1E",
         padding: "5px",
         borderRadius: "15px 100px 100px 100px",
         flexDirection: isMobile ? 'row' : 'column',

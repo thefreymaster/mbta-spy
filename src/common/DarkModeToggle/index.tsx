@@ -1,20 +1,19 @@
-import { Box } from "@mantine/core";
+import React from "react";
+
+import { Box, useMantineColorScheme } from "@mantine/core";
 import { isMobile } from "react-device-detect";
 import { TbRoute, TbRouteOff } from "react-icons/tb";
+import { MdDarkMode, MdOutlineBrightnessLow } from "react-icons/md";
 
-export const LinesToggle = ({
-  linesVisible,
-  setLinesVisible,
-}: {
-  linesVisible: boolean;
-  setLinesVisible(v: boolean): void;
-}) => {
+export const DarkModeToggle = () => {
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+
   const position = isMobile
     ? {
         bottom: 20,
         left: 20,
       }
-    : { top: 300, left: 20 };
+    : { top: 410, left: 20 };
 
   return (
     <Box
@@ -29,42 +28,42 @@ export const LinesToggle = ({
       })}
     >
       <Box
-        onClick={() => setLinesVisible(true)}
+        onClick={() => toggleColorScheme()}
         sx={() => ({
-          color: linesVisible ? "#1A1B1E" : "white",
+          color: colorScheme === "dark" ? "#1A1B1E" : "white",
           borderRadius: "100px",
           width: "40px",
           height: "40px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: linesVisible ? "white" : "#1A1B1E",
+          backgroundColor: colorScheme === "dark" ? "white" : "#1A1B1E",
           transition: "background-color 250ms ease-in-out",
           "&:hover": {
             cursor: "pointer",
           },
         })}
       >
-        <TbRoute />
+        <MdOutlineBrightnessLow />
       </Box>
       <Box
-        onClick={() => setLinesVisible(false)}
+        onClick={() => toggleColorScheme()}
         sx={() => ({
-          color: linesVisible ? "white" : "#1A1B1E",
+          color: colorScheme === "dark" ? "white" : "#1A1B1E",
           borderRadius: "100px",
           width: "40px",
           height: "40px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: linesVisible ? "#1A1B1E" : "white",
+          backgroundColor: colorScheme === "dark" ? "#1A1B1E" : "white",
           transition: "background-color 250ms ease-in-out",
           "&:hover": {
             cursor: "pointer",
           },
         })}
       >
-        <TbRouteOff />
+        <MdDarkMode />
       </Box>
     </Box>
   );

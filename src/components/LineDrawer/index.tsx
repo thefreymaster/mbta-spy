@@ -7,18 +7,54 @@ import {
   Space,
   Text,
   Timeline,
+  Tooltip,
 } from "@mantine/core";
 import { isDesktop } from "react-device-detect";
-import { TransitIcon } from "../LiveMarker";
 import { useQuery, useQueryClient } from "react-query";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import Pulse from "../../common/Pulse";
 import { TransitTitle } from "../../common/TransitTitle";
 import { getCurrentStopIndex } from "../../utils/getCurrentStopIndex";
-import { Predictions } from "../Predictions";
+import { Time } from "../../common/Time";
+import { GrWheelchair } from "react-icons/gr";
 
 const socket = io(window.location.origin);
+
+const StopTitle = ({
+  name,
+  predictions,
+}: {
+  name: string;
+  predictions: any;
+}) => {
+  const [stop] = predictions.filter((prediction: any) => {
+    return (
+      prediction?.attributes?.platform_name?.toLowerCase() ===
+      name?.toLowerCase()
+    );
+  });
+  return (
+    <Box display="flex">
+      <Box>{name}</Box>
+
+      {stop?.attributes?.arrival_time && (
+        <>
+          <Box
+            sx={{
+              flex: 1,
+              margin: "0px 10px 8px 10px",
+              borderBottom: "2px dashed silver",
+            }}
+          />
+          <Text size="xs" fw={700}>
+            <Time>{stop?.attributes?.arrival_time}</Time>
+          </Text>
+        </>
+      )}
+    </Box>
+  );
+};
 
 export const LineDrawer = (props: {
   lineRoute?: any;
@@ -29,8 +65,12 @@ export const LineDrawer = (props: {
 }) => {
   const history: any = useHistory();
   const location: any = useLocation();
-  const params: { transit_type: string; route_id: string; transit_id: string } =
-    useParams();
+  const params: {
+    transit_type: string;
+    route_id: string;
+    transit_id: string;
+    trip_id: string;
+  } = useParams();
 
   const queryClient = useQueryClient();
   const { routes }: any = queryClient.getQueryData("routes");
@@ -38,18 +78,22 @@ export const LineDrawer = (props: {
     (_route: { id: string }) => _route?.id === params?.route_id
   );
 
-  // const [vehicle, setVehicle]: any = React.useState();
-
-  // React.useEffect(() => {
-  //   socket.on(params.transit_id, ({ data }: { data: any }) => {
-  //     const parsed = JSON.parse(data);
-  //     setVehicle(parsed);
-  //   });
-
-  //   return function cleanUp() {
-  //     socket.disconnect();
-  //   };
-  // }, [params.transit_id]);
+  const { data: predictionsData, isLoading: predictionsIsLoading } = useQuery(
+    ["predictions", params?.trip_id],
+    () =>
+      fetch(`/api/predictions/${params?.route_id}/${params?.trip_id}`).then(
+        (res) => {
+          return res.json();
+        }
+      ),
+    {
+      enabled: !!params.route_id,
+      retry: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const { isLoading, data } = useQuery(
     ["stops", params.route_id],
@@ -117,7 +161,6 @@ export const LineDrawer = (props: {
           });
           history.push(`/${params.transit_type}`);
         }
-
         props.setLineDrawerIsOpen(false);
       }}
       title={
@@ -131,6 +174,7 @@ export const LineDrawer = (props: {
               : location?.state?.route?.attributes?.short_name
           }
           onClick={handleClickHeader}
+          minWidth="85%"
         />
       }
       padding="xl"
@@ -148,14 +192,13 @@ export const LineDrawer = (props: {
           position: "sticky",
           top: "0px",
           zIndex: 100,
-          backgroundColor: "white",
           boxShadow:
             "0 1px 3px rgb(0 0 0 / 5%), rgb(0 0 0 / 5%) 0px 20px 25px -5px, rgb(0 0 0 / 4%) 0px 10px 10px -5px",
         },
       })}
       className="drawer"
     >
-      {isLoading ? (
+      {isLoading || predictionsIsLoading ? (
         <Center sx={() => ({ minHeight: "100%" })}>
           <Loader color="gray" />
         </Center>
@@ -186,27 +229,53 @@ export const LineDrawer = (props: {
                     })
                   }
                   color="gray"
-                  title={stop?.attributes?.name}
+                  title={
+                    <StopTitle
+                      name={stop?.attributes?.name}
+                      predictions={predictionsData?.combined}
+                    />
+                  }
                 >
                   {currentStopIndex === index && (
                     <Pulse color={location?.state?.route?.attributes?.color} />
                   )}
-                  <Text size="xs" color="dimmed">
-                    {stop?.attributes?.address}
-                  </Text>
+                  <Box display="flex">
+                    <Text size="xs" color="dimmed">
+                      {stop?.attributes?.address}
+                    </Text>
+                    {/* {stop?.attributes?.wheelchair_boarding === 1 && (
+                      <>
+                        <Box
+                          sx={{
+                            flex: 1,
+                          }}
+                        />
+                        <Box
+                          sx={{
+                            minWidth: 30,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <GrWheelchair
+                            style={{
+                              padding: "5px",
+                              border: "1px solid silver",
+                              borderRadius: "100px",
+                              fontSize: "12px",
+                            }}
+                          />
+                        </Box>
+                      </>
+                    )} */}
+                  </Box>
                 </Timeline.Item>
               );
             })}
           </Timeline>
         </>
       )}
-      <Predictions
-        color={location?.state?.route?.attributes?.color}
-        direction={route?.attributes?.direction_names[direction_id]}
-        onMove={props.onMove}
-      />
     </Drawer>
   );
 };
-
-// compare vehicle stop ID to stops ID

@@ -21,7 +21,7 @@ export const LinesDrawerToggle = ({
         position: "absolute",
         zIndex: 100,
         boxShadow: theme.shadows.xl,
-        backgroundColor: "black",
+        backgroundColor: "#1A1B1E",
         padding: "5px",
         borderRadius: "15px 100px 100px 100px",
         ...position,
@@ -30,7 +30,7 @@ export const LinesDrawerToggle = ({
       <Box
         onClick={() => setLineDrawerIsOpen(true)}
         sx={() => ({
-          color: "black",
+          color: "#1A1B1E",
           borderRadius: "100px",
           width: "40px",
           height: "40px",
