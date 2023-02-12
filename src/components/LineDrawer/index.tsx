@@ -9,7 +9,7 @@ import {
   Timeline,
   Tooltip,
 } from "@mantine/core";
-import { isDesktop } from "react-device-detect";
+import { isDesktop, isMobile } from "react-device-detect";
 import { useQuery, useQueryClient } from "react-query";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
@@ -177,15 +177,16 @@ export const LineDrawer = (props: {
           minWidth="85%"
         />
       }
-      padding="xl"
-      size="lg"
-      position="right"
+      // @ts-ignore
+      padding={isMobile ? "xl" : "none"}
+      size="50vh"
+      position={isMobile ? "bottom" : "right"}
       withOverlay={false}
       sx={() => ({ overflow: "scroll" })}
       styles={() => ({
         drawer: {
-          borderRadius: "20px",
-          margin: "20px",
+          borderRadius: isMobile ? "0px" : "20px",
+          margin: isMobile ? "0px" : "20px",
         },
         header: {
           padding: "18px",
