@@ -25,11 +25,16 @@ export const DEFAULT_TRANSIT_TYPES = "0,1,2";
 const MapContent = (props: {
   onMove(event: any): void;
   linesVisible: boolean;
+  setLineDrawerIsOpen(v: boolean): void;
+  lineDrawerIsOpen: boolean;
 }) => {
-  const params: { transit_type: string; route_id: string; transit_id: string } =
-    useParams();
+  const params: {
+    transit_type: string;
+    route_id: string;
+    transit_id: string;
+    trip_id: string;
+  } = useParams();
   const [lineRoute, setLineRoute]: any = React.useState();
-  const [lineDrawerIsOpen, setLineDrawerIsOpen]: any = React.useState(false);
   const [vehicleType, setVehicleType] = React.useState("");
 
   const { isLoading, isError, error, data } = useQuery(
@@ -99,12 +104,9 @@ const MapContent = (props: {
         onMove={props.onMove}
         lineRoute={lineRoute}
         setLineRoute={setLineRoute}
-        lineDrawerIsOpen={lineDrawerIsOpen}
-        setLineDrawerIsOpen={setLineDrawerIsOpen}
+        lineDrawerIsOpen={props.lineDrawerIsOpen}
+        setLineDrawerIsOpen={props.setLineDrawerIsOpen}
       />
-      {(params?.transit_type && params?.route_id && params?.transit_id) && (
-        <LinesDrawerToggle setLineDrawerIsOpen={setLineDrawerIsOpen} />
-      )}
       <LineShapes
         vehicleType={vehicleType}
         shapeIds={getRouteIds()}
@@ -134,9 +136,15 @@ const MapContent = (props: {
 
 export const LiveMap = () => {
   const mapRef = useRef<MapRef>(null);
-  const params: { transit_type: string } = useParams();
+  const params: {
+    transit_type: string;
+    route_id: string;
+    transit_id: string;
+    trip_id: string;
+  } = useParams();
 
   const [linesVisible, setLinesVisible]: any = React.useState(true);
+  const [lineDrawerIsOpen, setLineDrawerIsOpen]: any = React.useState(false);
 
   const onMove = (event: {
     longitude: number;
@@ -161,6 +169,9 @@ export const LiveMap = () => {
         setLinesVisible={setLinesVisible}
         linesVisible={linesVisible}
       />
+      {params?.trip_id && params?.route_id && params?.transit_id && (
+        <LinesDrawerToggle setLineDrawerIsOpen={setLineDrawerIsOpen} />
+      )}
       <Map
         ref={mapRef}
         initialViewState={{
@@ -173,7 +184,12 @@ export const LiveMap = () => {
         style={{ width: "100vw", height: "100vh" }}
         mapStyle="mapbox://styles/thefreymaster/ckrgryqok3xbu17okr3jnftem?optimize=true"
       >
-        <MapContent onMove={onMove} linesVisible={linesVisible} />
+        <MapContent
+          setLineDrawerIsOpen={setLineDrawerIsOpen}
+          lineDrawerIsOpen={lineDrawerIsOpen}
+          onMove={onMove}
+          linesVisible={linesVisible}
+        />
       </Map>
     </div>
   );
