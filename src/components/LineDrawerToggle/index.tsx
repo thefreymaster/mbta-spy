@@ -1,7 +1,7 @@
 import { Box } from "@mantine/core";
 import React from "react";
 import { isMobile } from "react-device-detect";
-import { TbInfoCircle } from "react-icons/tb";
+import { MdAccessTime } from "react-icons/md";
 
 export const LinesDrawerToggle = ({
   setLineDrawerIsOpen,
@@ -44,7 +44,7 @@ export const LinesDrawerToggle = ({
           },
         })}
       >
-        <TbInfoCircle />
+        <MdAccessTime />
       </Box>
     </Box>
   );
