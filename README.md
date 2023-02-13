@@ -1,6 +1,6 @@
 # MBTA Spy
 
-This project shows the entire MBTA fleet of vehicles on a map, updating in real-time.
+See the entire MBTA fleet of vehicles on a map, updating in real-time.
 
 <img width="1446" alt="Screen Shot 2022-08-02 at 10 21 36 PM" src="https://user-images.githubusercontent.com/28308815/182510365-0323e121-528b-4ad1-83d3-33bffbe208b6.png">
 
