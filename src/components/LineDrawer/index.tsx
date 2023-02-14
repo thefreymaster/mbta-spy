@@ -31,10 +31,22 @@ const StopTitle = ({
       name?.toLowerCase()
     );
   });
+  const { colorScheme } = useMantineColorScheme();
+
   return (
     <Box display="flex">
-      <Box>{name}</Box>
-
+      <Text
+        sx={(theme) => ({
+          color:
+            colorScheme === "dark"
+              ? theme.colors.gray[5]
+              : theme.colors.gray[9],
+        })}
+        size="xs"
+        fw={700}
+      >
+        {name}
+      </Text>
       {stop?.attributes?.arrival_time && (
         <>
           <Box
@@ -44,7 +56,16 @@ const StopTitle = ({
               borderBottom: "2px dashed #c0c0c024",
             }}
           />
-          <Text size="xs" fw={700}>
+          <Text
+            sx={(theme) => ({
+              color:
+                colorScheme === "dark"
+                  ? theme.colors.gray[5]
+                  : theme.colors.gray[9],
+            })}
+            size="xs"
+            fw={700}
+          >
             <Time>{stop?.attributes?.arrival_time}</Time>
           </Text>
         </>
@@ -230,6 +251,10 @@ export const LineDrawer = (props: {
         drawer: {
           borderRadius: isMobile ? "0px" : "20px",
           margin: isMobile ? "0px" : "20px",
+          backgroundColor:
+            colorScheme === "dark"
+              ? theme.colors.gray[9]
+              : theme.colors.gray[2],
         },
         header: {
           padding: "18px",
@@ -246,6 +271,18 @@ export const LineDrawer = (props: {
         },
         title: {
           marginRight: "0px",
+        },
+        body: {
+          backgroundColor:
+            colorScheme === "dark"
+              ? theme.colors.gray[9]
+              : theme.colors.gray[2],
+        },
+        overlay: {
+          backgroundColor:
+            colorScheme === "dark"
+              ? theme.colors.gray[9]
+              : theme.colors.gray[2],
         },
       })}
       className="drawer"
@@ -273,15 +310,20 @@ export const LineDrawer = (props: {
             {data?.stops?.map((stop: any, index: number) => (
               <Timeline.Item
                 lineVariant={index === currentStopIndex ? "dashed" : "solid"}
-                onClick={() => props.onMove({
-                  longitude: stop.attributes.longitude,
-                  latitude: stop.attributes.latitude,
-                  zoom: 14,
-                })}
+                onClick={() =>
+                  props.onMove({
+                    longitude: stop.attributes.longitude,
+                    latitude: stop.attributes.latitude,
+                    zoom: 14,
+                  })
+                }
                 color="gray"
-                title={<StopTitle
-                  name={stop?.attributes?.name}
-                  predictions={predictionsData?.combined} />}
+                title={
+                  <StopTitle
+                    name={stop?.attributes?.name}
+                    predictions={predictionsData?.combined}
+                  />
+                }
               >
                 {currentStopIndex === index && (
                   <Pulse color={location?.state?.route?.attributes?.color} />
