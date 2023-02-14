@@ -25,10 +25,10 @@ export const TransitTitle = (props: {
           minWidth: props.minWidth,
         })}
       >
-        <Avatar radius="xl" sx={{backgroundColor: colorScheme === "dark" ? "white" : "black",}}>
+        <Avatar radius="xl" sx={(theme) => ({backgroundColor: colorScheme === "dark" ? theme.colors.gray[0] : theme.colors.gray[9]})}>
           <TransitIcon
             value={props.type}
-            color={colorScheme === "dark" ? "black" : "white"}
+            color={`#${props?.color}`}
             style={{ display: "flex" }}
             onClick={props.onClick}
           />
