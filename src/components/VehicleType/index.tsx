@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@mantine/core";
+import { Box, useMantineColorScheme } from "@mantine/core";
 import {
   MdTram,
   MdDirectionsSubway,
@@ -9,6 +9,7 @@ import {
 } from "react-icons/md";
 import { useHistory, useParams } from "react-router-dom";
 import { isMobile } from "react-device-detect";
+import { getBackgroundColor, getColor, getNavigationBackgroundColor } from "../../utils/getColors";
 
 const transitTypes = new Map();
 transitTypes.set("0", "lite-rail");
@@ -55,6 +56,7 @@ const NavIcon = ({
 }) => {
   const history = useHistory();
   const params: { transit_type: string } = useParams();
+  const { colorScheme } = useMantineColorScheme();
 
   return (
     <Box
@@ -64,21 +66,23 @@ const NavIcon = ({
         }
         return history.push("/");
       }}
-      sx={() => ({
-        color:
-          params?.transit_type === value || (isIndex && !params?.transit_type)
-            ? "black"
-            : "white",
+      sx={(theme) => ({
+        color: getColor({
+          theme,
+          active: params.transit_type === value || (!!isIndex && !params.transit_type),
+          colorScheme,
+        }),
         borderRadius: "100px",
         width: "40px",
         height: "40px",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor:
-          params?.transit_type === value || (isIndex && !params?.transit_type)
-            ? "white"
-            : "#1A1B1E",
+        backgroundColor: getBackgroundColor({
+          theme,
+          active: params.transit_type === value || (!!isIndex && !params.transit_type),
+          colorScheme,
+        }),
         transition: "background-color 250ms ease-in-out",
         "&:hover": {
           cursor: "pointer",
@@ -94,27 +98,31 @@ export const VehicleType = () => {
   const position = isMobile
     ? {
         bottom: 20,
-        left: 'calc(50% - 100px)',
+        left: "calc(50% - 100px)",
         zIndex: 100,
         display: "flex",
       }
     : { top: 75, left: 20, zIndex: 100 };
+  const { colorScheme } = useMantineColorScheme();
 
   return (
     <Box
       sx={(theme) => ({
         position: "absolute",
         boxShadow: theme.shadows.xl,
-        backgroundColor: "#1A1B1E",
+        backgroundColor: getNavigationBackgroundColor({
+          colorScheme,
+          colors: theme.colors,
+        }),
         padding: "5px",
         borderRadius: "15px 100px 100px 100px",
-        flexDirection: isMobile ? 'row' : 'column',
+        flexDirection: isMobile ? "row" : "column",
         ...position,
       })}
     >
       <NavIcon value="" icon={<MdPublic />} isIndex />
       {data.map((type) => (
-        <NavIcon value={type.value} icon={type.icon} />
+        <NavIcon key={type.value} value={type.value} icon={type.icon} />
       ))}
     </Box>
   );

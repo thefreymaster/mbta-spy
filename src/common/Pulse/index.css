@@ -22,24 +22,24 @@
 }
 
 .pulse {
-    animation       : pulse 5s cubic-bezier(0.455, 0.03, 0.515, 0.955) -.4s infinite;
-    border-radius   : 50%;
-    box-sizing      : border-box;
-    height          : 1px;
-    width           : 1px;
-    position        : absolute;
-    top             : -5px;
-    left            : -15px;
+    animation    : pulse 5s cubic-bezier(0.455, 0.03, 0.515, 0.955) -.4s infinite;
+    border-radius: 50%;
+    box-sizing   : border-box;
+    height       : 1px;
+    width        : 1px;
+    position     : absolute;
+    top          : -5px;
+    right        : -15px;
 }
 
 .pulse:before {
-    animation       : pulseRing 5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-    border-radius   : 100px;
-    content         : '';
-    display         : block;
-    height          : 300%;
-    left            : -100%;
-    position        : relative;
-    top             : -100%;
-    width           : 300%;
+    animation    : pulseRing 5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    border-radius: 100px;
+    content      : '';
+    display      : block;
+    height       : 300%;
+    left         : -100%;
+    position     : relative;
+    top          : -100%;
+    width        : 300%;
 }

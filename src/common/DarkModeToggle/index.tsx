@@ -4,6 +4,7 @@ import { Box, useMantineColorScheme } from "@mantine/core";
 import { isMobile } from "react-device-detect";
 import { TbRoute, TbRouteOff } from "react-icons/tb";
 import { MdDarkMode, MdOutlineBrightnessLow } from "react-icons/md";
+import { getBackgroundColor, getColor, getNavigationBackgroundColor } from "../../utils/getColors";
 
 export const DarkModeToggle = () => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -11,7 +12,7 @@ export const DarkModeToggle = () => {
   const position = isMobile
     ? {
         bottom: 20,
-        left: 20,
+        right: 20,
       }
     : { top: 410, left: 20 };
 
@@ -21,23 +22,34 @@ export const DarkModeToggle = () => {
         position: "absolute",
         zIndex: 100,
         boxShadow: theme.shadows.xl,
-        backgroundColor: "#1A1B1E",
+        backgroundColor: getNavigationBackgroundColor({
+          colorScheme,
+          colors: theme.colors,
+        }),
         padding: "5px",
         borderRadius: "15px 100px 100px 100px",
         ...position,
       })}
     >
       <Box
-        onClick={() => toggleColorScheme()}
-        sx={() => ({
-          color: colorScheme === "dark" ? "#1A1B1E" : "white",
+        onClick={() => toggleColorScheme("light")}
+        sx={(theme) => ({
+          color: getColor({
+            theme,
+            active: colorScheme === "light",
+            colorScheme,
+          }),
           borderRadius: "100px",
           width: "40px",
           height: "40px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: colorScheme === "dark" ? "white" : "#1A1B1E",
+          backgroundColor: getBackgroundColor({
+            theme,
+            active: colorScheme === "light",
+            colorScheme,
+          }),
           transition: "background-color 250ms ease-in-out",
           "&:hover": {
             cursor: "pointer",
@@ -47,16 +59,24 @@ export const DarkModeToggle = () => {
         <MdOutlineBrightnessLow />
       </Box>
       <Box
-        onClick={() => toggleColorScheme()}
-        sx={() => ({
-          color: colorScheme === "dark" ? "white" : "#1A1B1E",
+        onClick={() => toggleColorScheme("dark")}
+        sx={(theme) => ({
+          color: getColor({
+            theme,
+            active: colorScheme === "dark",
+            colorScheme,
+          }),
           borderRadius: "100px",
           width: "40px",
           height: "40px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: colorScheme === "dark" ? "#1A1B1E" : "white",
+          backgroundColor: getBackgroundColor({
+            theme,
+            active: colorScheme === "dark",
+            colorScheme,
+          }),
           transition: "background-color 250ms ease-in-out",
           "&:hover": {
             cursor: "pointer",

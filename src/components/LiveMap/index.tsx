@@ -5,7 +5,7 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import LiveMarker from "../LiveMarker/index";
-import { Center, Loader, Switch } from "@mantine/core";
+import { Center, Loader, Switch, useMantineColorScheme } from "@mantine/core";
 import { LineShapes } from "../LineShapes/index";
 import { LineDrawer } from "../LineDrawer";
 import { VehicleType } from "../VehicleType/index";
@@ -145,6 +145,8 @@ export const LiveMap = () => {
     trip_id: string;
   } = useParams();
 
+  const { colorScheme } = useMantineColorScheme();
+
   const [linesVisible, setLinesVisible]: any = React.useState(true);
   const [lineDrawerIsOpen, setLineDrawerIsOpen]: any = React.useState(false);
 
@@ -162,21 +164,13 @@ export const LiveMap = () => {
 
   return (
     <div
-      // ref={mapContainerRef}
       className="map-container"
-      // style={{ width: "100vw", height: "100vh" }}
     >
       <VehicleType />
       <LinesToggle
         setLinesVisible={setLinesVisible}
         linesVisible={linesVisible}
       />
-      {params?.trip_id &&
-        params?.route_id &&
-        params?.transit_id &&
-        isMobile && (
-          <LinesDrawerToggle setLineDrawerIsOpen={setLineDrawerIsOpen} />
-        )}
       {/* <DarkModeToggle /> */}
       <Map
         ref={mapRef}
@@ -185,10 +179,13 @@ export const LiveMap = () => {
           latitude: DEFAULT_LATITUDE,
           zoom: 12,
         }}
-        reuseMaps
         mapboxAccessToken={process.env.REACT_APP_MAP_BOX_TOKEN}
         style={{ width: "100vw", height: "100vh" }}
-        mapStyle="mapbox://styles/thefreymaster/ckz4a2i2m000r16pquoggwnqp?optimize=true"
+        mapStyle={
+          colorScheme === "dark"
+            ? "mapbox://styles/thefreymaster/ckz4a2i2m000r16pquoggwnqp"
+            : "mapbox://styles/thefreymaster/cle3mr5kl001v01muelgj6hgg"
+        }
       >
         <MapContent
           setLineDrawerIsOpen={setLineDrawerIsOpen}

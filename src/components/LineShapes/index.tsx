@@ -121,8 +121,6 @@ export const LineShapes = (props: {
     ).values(),
   ];
 
-  // console.log({ parsedShapes, uniqueShapes });
-
   const memorizedShapes = React.useMemo(() => {
     if (isLoading) {
       return null;

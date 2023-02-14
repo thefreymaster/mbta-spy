@@ -2,8 +2,10 @@ import React from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { Layer, Source } from "react-map-gl";
 import { useQuery } from "react-query";
+import { useMantineColorScheme } from "@mantine/core";
 
 export const Stop = (props: { id: string; stop: any }) => {
+  const { colorScheme } = useMantineColorScheme();
   const location: any = useLocation();
 
   const params: { transit_type: string; route_id: string; transit_id: string } =
@@ -46,11 +48,13 @@ export const Stop = (props: { id: string; stop: any }) => {
               location?.state?.route?.attributes?.color
             )}`,
             "circle-radius": 6,
+            "circle-stroke-color": colorScheme === "dark" ? "white" : "black",
+            "circle-stroke-width": 2,
           }}
         />
       </Source>
     );
-  }, [location?.state?.route?.attributes?.color, props.id]);
+  }, [location?.state?.route?.attributes?.color, props.id, colorScheme]);
   return <>{memorizedStop}</>;
 };
 

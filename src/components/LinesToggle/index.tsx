@@ -1,6 +1,11 @@
-import { Box } from "@mantine/core";
+import { Box, useMantineColorScheme } from "@mantine/core";
 import { isMobile } from "react-device-detect";
 import { TbRoute, TbRouteOff } from "react-icons/tb";
+import {
+  getBackgroundColor,
+  getColor,
+  getNavigationBackgroundColor,
+} from "../../utils/getColors";
 
 export const LinesToggle = ({
   linesVisible,
@@ -9,6 +14,7 @@ export const LinesToggle = ({
   linesVisible: boolean;
   setLinesVisible(v: boolean): void;
 }) => {
+  const { colorScheme } = useMantineColorScheme();
   const position = isMobile
     ? {
         bottom: 20,
@@ -22,7 +28,10 @@ export const LinesToggle = ({
         position: "absolute",
         zIndex: 100,
         boxShadow: theme.shadows.xl,
-        backgroundColor: "#1A1B1E",
+        backgroundColor: getNavigationBackgroundColor({
+          colorScheme,
+          colors: theme.colors,
+        }),
         padding: "5px",
         borderRadius: "15px 100px 100px 100px",
         ...position,
@@ -30,15 +39,23 @@ export const LinesToggle = ({
     >
       <Box
         onClick={() => setLinesVisible(true)}
-        sx={() => ({
-          color: linesVisible ? "#1A1B1E" : "white",
+        sx={(theme) => ({
+          color: getColor({
+            theme,
+            active: linesVisible === true,
+            colorScheme,
+          }),
           borderRadius: "100px",
           width: "40px",
           height: "40px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: linesVisible ? "white" : "#1A1B1E",
+          backgroundColor: getBackgroundColor({
+            theme,
+            active: linesVisible === true,
+            colorScheme,
+          }),
           transition: "background-color 250ms ease-in-out",
           "&:hover": {
             cursor: "pointer",
@@ -49,15 +66,23 @@ export const LinesToggle = ({
       </Box>
       <Box
         onClick={() => setLinesVisible(false)}
-        sx={() => ({
-          color: linesVisible ? "white" : "#1A1B1E",
+        sx={(theme) => ({
+          color: getColor({
+            theme,
+            active: linesVisible === false,
+            colorScheme,
+          }),
           borderRadius: "100px",
           width: "40px",
           height: "40px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: linesVisible ? "#1A1B1E" : "white",
+          backgroundColor: getBackgroundColor({
+            theme,
+            active: linesVisible === false,
+            colorScheme,
+          }),
           transition: "background-color 250ms ease-in-out",
           "&:hover": {
             cursor: "pointer",

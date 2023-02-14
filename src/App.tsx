@@ -13,6 +13,7 @@ import {
 
 import Router from "./routes";
 import { TransitTitle } from "./common/TransitTitle";
+import { useHistory } from "react-router-dom";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,8 @@ const App = () => {
     localStorage.setItem("colorScheme", value);
     return setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
   };
+
+  const history = useHistory()
 
   return (
     <ColorSchemeProvider
@@ -51,6 +54,7 @@ const App = () => {
                 height={60}
                 p="xs"
                 pl="lg"
+                onClick={() => history.push('/')}
               >
                 <TransitTitle type={4} color="000000" label="MBTA Spy" />
                 <Space sx={{ flexGrow: 1 }} />

@@ -7,19 +7,16 @@ import {
   Space,
   Text,
   Timeline,
-  Tooltip,
+  useMantineColorScheme,
 } from "@mantine/core";
 import { isDesktop, isMobile } from "react-device-detect";
 import { useQuery, useQueryClient } from "react-query";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import { io } from "socket.io-client";
 import Pulse from "../../common/Pulse";
-import { TransitTitle } from "../../common/TransitTitle";
 import { getCurrentStopIndex } from "../../utils/getCurrentStopIndex";
 import { Time } from "../../common/Time";
-import { GrWheelchair } from "react-icons/gr";
-
-const socket = io(window.location.origin);
+import { DrawerTitle } from "./DrawerTitle";
+import { getBackgroundColor } from "../../utils/getColors";
 
 const StopTitle = ({
   name,
@@ -44,7 +41,7 @@ const StopTitle = ({
             sx={{
               flex: 1,
               margin: "0px 10px 8px 10px",
-              borderBottom: "2px dashed silver",
+              borderBottom: "2px dashed #c0c0c024",
             }}
           />
           <Text size="xs" fw={700}>
@@ -56,6 +53,46 @@ const StopTitle = ({
   );
 };
 
+const TimelineItem = ({
+  index,
+  currentStopIndex,
+  onMove,
+  stop,
+  predictionsData,
+}: any) => {
+  const location: any = useLocation();
+
+  return (
+    <Timeline.Item
+      key={index}
+      lineVariant={index === currentStopIndex ? "dashed" : "solid"}
+      onClick={() =>
+        onMove({
+          longitude: stop.attributes.longitude,
+          latitude: stop.attributes.latitude,
+          zoom: 14,
+        })
+      }
+      color="gray"
+      title={
+        <StopTitle
+          name={stop?.attributes?.name}
+          predictions={predictionsData?.combined}
+        />
+      }
+    >
+      {currentStopIndex === index && (
+        <Pulse color={location?.state?.route?.attributes?.color} />
+      )}
+      <Box display="flex">
+        <Text size="xs" color="dimmed">
+          {stop?.attributes?.address}
+        </Text>
+      </Box>
+    </Timeline.Item>
+  );
+};
+
 export const LineDrawer = (props: {
   lineRoute?: any;
   setLineRoute(s: any): void;
@@ -63,6 +100,7 @@ export const LineDrawer = (props: {
   setLineDrawerIsOpen(event: boolean): void;
   lineDrawerIsOpen: boolean;
 }) => {
+  const { colorScheme } = useMantineColorScheme();
   const history: any = useHistory();
   const location: any = useLocation();
   const params: {
@@ -77,6 +115,7 @@ export const LineDrawer = (props: {
   const [route] = routes.filter(
     (_route: { id: string }) => _route?.id === params?.route_id
   );
+  const [fullHeight, setFullHeight] = React.useState(false);
 
   const { data: predictionsData, isLoading: predictionsIsLoading } = useQuery(
     ["predictions", params?.trip_id],
@@ -149,9 +188,20 @@ export const LineDrawer = (props: {
       : currentStopIndex;
   };
 
+  const getSize = () => {
+    if (isDesktop) {
+      return "40vh";
+    }
+    if (fullHeight) {
+      return "100vh";
+    }
+    return "22vh";
+  };
+
   return (
     <Drawer
-      opened={(!!params.transit_id && isDesktop) || props.lineDrawerIsOpen}
+      align="right"
+      opened={!!params.transit_id}
       onClose={() => {
         if (isDesktop) {
           props.onMove({
@@ -159,31 +209,24 @@ export const LineDrawer = (props: {
             latitude: location?.state?.vehicle.attributes.latitude,
             zoom: 13,
           });
-          history.push(`/${params.transit_type}`);
         }
+        history.push(`/${params.transit_type}`);
         props.setLineDrawerIsOpen(false);
       }}
       title={
-        <TransitTitle
-          color={location?.state?.route?.attributes?.color}
-          label={location?.state?.vehicle?.attributes?.label}
-          type={location?.state?.route?.attributes?.type}
-          description={
-            location?.state?.route?.attributes?.short_name === ""
-              ? location?.state?.route?.attributes?.long_name
-              : location?.state?.route?.attributes?.short_name
-          }
-          onClick={handleClickHeader}
-          minWidth="85%"
+        <DrawerTitle
+          handleClickHeader={handleClickHeader}
+          fullHeight={fullHeight}
+          setFullHeight={setFullHeight}
         />
       }
       // @ts-ignore
       padding={isMobile ? "xl" : "none"}
-      size="50vh"
+      size={getSize()}
       position={isMobile ? "bottom" : "right"}
       withOverlay={false}
       sx={() => ({ overflow: "scroll" })}
-      styles={() => ({
+      styles={(theme) => ({
         drawer: {
           borderRadius: isMobile ? "0px" : "20px",
           margin: isMobile ? "0px" : "20px",
@@ -193,8 +236,16 @@ export const LineDrawer = (props: {
           position: "sticky",
           top: "0px",
           zIndex: 100,
+          backgroundColor: getBackgroundColor({
+            theme,
+            active: true,
+            colorScheme,
+          }),
           boxShadow:
             "0 1px 3px rgb(0 0 0 / 5%), rgb(0 0 0 / 5%) 0px 20px 25px -5px, rgb(0 0 0 / 4%) 0px 10px 10px -5px",
+        },
+        title: {
+          marginRight: "0px",
         },
       })}
       className="drawer"
@@ -217,63 +268,31 @@ export const LineDrawer = (props: {
                 cursor: "pointer",
               },
             })}
+            align="right"
           >
-            {data?.stops?.map((stop: any, index: number) => {
-              return (
-                <Timeline.Item
-                  lineVariant={index === currentStopIndex ? "dashed" : "solid"}
-                  onClick={() =>
-                    props.onMove({
-                      longitude: stop.attributes.longitude,
-                      latitude: stop.attributes.latitude,
-                      zoom: 14,
-                    })
-                  }
-                  color="gray"
-                  title={
-                    <StopTitle
-                      name={stop?.attributes?.name}
-                      predictions={predictionsData?.combined}
-                    />
-                  }
-                >
-                  {currentStopIndex === index && (
-                    <Pulse color={location?.state?.route?.attributes?.color} />
-                  )}
-                  <Box display="flex">
-                    <Text size="xs" color="dimmed">
-                      {stop?.attributes?.address}
-                    </Text>
-                    {/* {stop?.attributes?.wheelchair_boarding === 1 && (
-                      <>
-                        <Box
-                          sx={{
-                            flex: 1,
-                          }}
-                        />
-                        <Box
-                          sx={{
-                            minWidth: 30,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <GrWheelchair
-                            style={{
-                              padding: "5px",
-                              border: "1px solid silver",
-                              borderRadius: "100px",
-                              fontSize: "12px",
-                            }}
-                          />
-                        </Box>
-                      </>
-                    )} */}
-                  </Box>
-                </Timeline.Item>
-              );
-            })}
+            {data?.stops?.map((stop: any, index: number) => (
+              <Timeline.Item
+                lineVariant={index === currentStopIndex ? "dashed" : "solid"}
+                onClick={() => props.onMove({
+                  longitude: stop.attributes.longitude,
+                  latitude: stop.attributes.latitude,
+                  zoom: 14,
+                })}
+                color="gray"
+                title={<StopTitle
+                  name={stop?.attributes?.name}
+                  predictions={predictionsData?.combined} />}
+              >
+                {currentStopIndex === index && (
+                  <Pulse color={location?.state?.route?.attributes?.color} />
+                )}
+                <Box display="flex">
+                  <Text size="xs" color="dimmed">
+                    {stop?.attributes?.address}
+                  </Text>
+                </Box>
+              </Timeline.Item>
+            ))}
           </Timeline>
         </>
       )}

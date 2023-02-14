@@ -10,7 +10,7 @@ export const TransitTitle = (props: {
   minWidth?: string;
 }) => {
   const { colorScheme } = useMantineColorScheme();
-  
+
   return (
     <>
       <Box
@@ -25,17 +25,17 @@ export const TransitTitle = (props: {
           minWidth: props.minWidth,
         })}
       >
-        <Avatar radius="xl" >
+        <Avatar radius="xl" sx={{backgroundColor: colorScheme === "dark" ? "white" : "black",}}>
           <TransitIcon
             value={props.type}
-            color={colorScheme === 'dark' ? "black" : "white"}
+            color={colorScheme === "dark" ? "black" : "white"}
             style={{ display: "flex" }}
             onClick={props.onClick}
           />
         </Avatar>
         <Title
           sx={() => ({
-            marginLeft: 5,
+            marginLeft: 15,
             minWidth: "40px",
           })}
           order={6}
