@@ -6,14 +6,11 @@ import {
   AppShell,
   ColorScheme,
   ColorSchemeProvider,
-  Header,
   MantineProvider,
-  Space,
 } from "@mantine/core";
 
 import Router from "./routes";
-import { TransitTitle } from "./common/TransitTitle";
-import { useHistory } from "react-router-dom";
+import AppHeader from "./components/AppHeader";
 
 const queryClient = new QueryClient();
 
@@ -25,8 +22,6 @@ const App = () => {
     localStorage.setItem("colorScheme", value);
     return setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
   };
-
-  const history = useHistory()
 
   return (
     <ColorSchemeProvider
@@ -42,23 +37,7 @@ const App = () => {
           <AppShell
             sx={{ padding: "0px !important", minHeight: "100%" }}
             header={
-              <Header
-                style={{
-                  position: "fixed",
-                  top: 0,
-                  backgroundColor: "transparent",
-                  display: "flex",
-                  alignItems: "center",
-                  borderBottom: "0px",
-                }}
-                height={60}
-                p="xs"
-                pl="lg"
-                onClick={() => history.push('/')}
-              >
-                <TransitTitle type={4} color="000000" label="MBTA Spy" />
-                <Space sx={{ flexGrow: 1 }} />
-              </Header>
+              <AppHeader />
             }
           >
             <Router />

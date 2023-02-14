@@ -193,9 +193,9 @@ export const LineDrawer = (props: {
       return "40vh";
     }
     if (fullHeight) {
-      return "100vh";
+      return "90vh";
     }
-    return "22vh";
+    return "28vh";
   };
 
   return (

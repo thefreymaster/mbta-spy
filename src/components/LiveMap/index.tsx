@@ -171,7 +171,7 @@ export const LiveMap = () => {
         setLinesVisible={setLinesVisible}
         linesVisible={linesVisible}
       />
-      {/* <DarkModeToggle /> */}
+      <DarkModeToggle />
       <Map
         ref={mapRef}
         initialViewState={{

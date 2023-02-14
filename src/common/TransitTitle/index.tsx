@@ -1,4 +1,4 @@
-import { Avatar, Box, Title, useMantineColorScheme } from "@mantine/core";
+import { Box, Title, useMantineColorScheme } from "@mantine/core";
 import { TransitIcon } from "../../components/LiveMarker";
 
 export const TransitTitle = (props: {
@@ -8,6 +8,7 @@ export const TransitTitle = (props: {
   description?: string;
   onClick?(): void;
   minWidth?: string;
+  backgroundColor?: string;
 }) => {
   const { colorScheme } = useMantineColorScheme();
 
@@ -18,21 +19,30 @@ export const TransitTitle = (props: {
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
-          backgroundColor: `#${props?.color}`,
+          backgroundColor: props.backgroundColor ?? `#${props?.color}`,
           color: "white",
           borderRadius: "100px 20px 100px 100px",
           padding: "3px 20px 3px 3px",
           minWidth: props.minWidth,
         })}
       >
-        <Avatar radius="xl" sx={(theme) => ({backgroundColor: colorScheme === "dark" ? theme.colors.gray[0] : theme.colors.gray[9]})}>
+        <Box
+          sx={(theme) => ({
+            backgroundColor:
+              colorScheme === "dark"
+                ? theme.colors.gray[9]
+                : theme.colors.gray[0],
+            borderRadius: 100,
+            padding: 10
+          })}
+        >
           <TransitIcon
             value={props.type}
             color={`#${props?.color}`}
             style={{ display: "flex" }}
             onClick={props.onClick}
           />
-        </Avatar>
+        </Box>
         <Title
           sx={() => ({
             marginLeft: 15,
