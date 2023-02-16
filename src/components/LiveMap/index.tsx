@@ -1,21 +1,19 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { useQuery } from "react-query";
 import Map, { MapRef } from "react-map-gl";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import LiveMarker from "../LiveMarker/index";
-import { Center, Loader, Switch, useMantineColorScheme } from "@mantine/core";
+import { Center, Loader, useMantineColorScheme } from "@mantine/core";
 import { LineShapes } from "../LineShapes/index";
 import { LineDrawer } from "../LineDrawer";
-import { VehicleType } from "../VehicleType/index";
+import { VehicleTypeToggle } from "../VehicleTypeToggle";
 import { useParams } from "react-router-dom";
 
 import "./live-map.css";
 import { LineStops } from "../LineStops";
 import { LinesToggle } from "../LinesToggle";
-import { LinesDrawerToggle } from "../LineDrawerToggle";
-import { isMobile } from "react-device-detect";
 import { DarkModeToggle } from "../../common/DarkModeToggle";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAP_BOX_TOKEN || "";
@@ -166,7 +164,7 @@ export const LiveMap = () => {
     <div
       className="map-container"
     >
-      <VehicleType />
+      <VehicleTypeToggle />
       <LinesToggle
         setLinesVisible={setLinesVisible}
         linesVisible={linesVisible}

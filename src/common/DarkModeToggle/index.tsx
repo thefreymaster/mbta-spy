@@ -1,90 +1,68 @@
 import React from "react";
 
-import { Box, useMantineColorScheme } from "@mantine/core";
+import { Box, useMantineColorScheme, useMantineTheme } from "@mantine/core";
 import { isMobile } from "react-device-detect";
 import { TbRoute, TbRouteOff } from "react-icons/tb";
 import { MdDarkMode, MdOutlineBrightnessLow } from "react-icons/md";
-import { getBackgroundColor, getColor, getNavigationBackgroundColor } from "../../utils/getColors";
+import {
+  getBackgroundColor,
+  getColor,
+  getNavigationBackgroundColor,
+} from "../../utils/getColors";
+import MapInteractions from "../../components/MapInteractions";
 
 export const DarkModeToggle = () => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const theme = useMantineTheme();
 
   const position = isMobile
     ? {
-        bottom: 20,
+        bottom: 40,
         right: 20,
       }
-    : { top: 410, left: 20 };
+    : { top: 420, left: 20 };
 
   return (
-    <Box
-      sx={(theme) => ({
-        position: "absolute",
-        zIndex: 100,
-        boxShadow: theme.shadows.xl,
-        backgroundColor: getNavigationBackgroundColor({
-          colorScheme,
-          colors: theme.colors,
-        }),
-        padding: "5px",
-        borderRadius: "15px 100px 100px 100px",
-        ...position,
+    <MapInteractions.Container
+      position={position}
+      backgroundColor={getNavigationBackgroundColor({
+        colorScheme,
+        colors: theme.colors,
       })}
     >
-      <Box
+      <MapInteractions.Button
         onClick={() => toggleColorScheme("light")}
-        sx={(theme) => ({
-          color: getColor({
-            theme,
-            active: colorScheme === "light",
-            colorScheme,
-          }),
-          borderRadius: "100px",
-          width: "40px",
-          height: "40px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: getBackgroundColor({
-            theme,
-            active: colorScheme === "light",
-            colorScheme,
-          }),
-          transition: "background-color 250ms ease-in-out",
-          "&:hover": {
-            cursor: "pointer",
-          },
+        color={getColor({
+          theme,
+          active: colorScheme === "light",
+          colorScheme,
         })}
+        backgroundColor={getBackgroundColor({
+          theme,
+          active: colorScheme === "light",
+          colorScheme,
+        })}
+        active={colorScheme === "light"}
       >
         <MdOutlineBrightnessLow />
-      </Box>
-      <Box
+      </MapInteractions.Button>
+      <Box mb="xs" />
+      <MapInteractions.Button
         onClick={() => toggleColorScheme("dark")}
-        sx={(theme) => ({
-          color: getColor({
-            theme,
-            active: colorScheme === "dark",
-            colorScheme,
-          }),
-          borderRadius: "100px",
-          width: "40px",
-          height: "40px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: getBackgroundColor({
-            theme,
-            active: colorScheme === "dark",
-            colorScheme,
-          }),
-          transition: "background-color 250ms ease-in-out",
-          "&:hover": {
-            cursor: "pointer",
-          },
+        color={getColor({
+          theme,
+          active: colorScheme === "dark",
+          colorScheme,
         })}
+        backgroundColor={getBackgroundColor({
+          theme,
+          active: colorScheme === "dark",
+          colorScheme,
+        })}
+        active={colorScheme === "dark"}
       >
         <MdDarkMode />
-      </Box>
-    </Box>
+      </MapInteractions.Button>
+    </MapInteractions.Container>
   );
 };

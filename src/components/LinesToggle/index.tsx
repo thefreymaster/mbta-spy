@@ -1,4 +1,4 @@
-import { Box, useMantineColorScheme } from "@mantine/core";
+import { Box, useMantineColorScheme, useMantineTheme } from "@mantine/core";
 import { isMobile } from "react-device-detect";
 import { TbRoute, TbRouteOff } from "react-icons/tb";
 import {
@@ -6,6 +6,7 @@ import {
   getColor,
   getNavigationBackgroundColor,
 } from "../../utils/getColors";
+import MapInteractions from "../MapInteractions";
 
 export const LinesToggle = ({
   linesVisible,
@@ -15,82 +16,54 @@ export const LinesToggle = ({
   setLinesVisible(v: boolean): void;
 }) => {
   const { colorScheme } = useMantineColorScheme();
+  const theme = useMantineTheme();
   const position = isMobile
     ? {
-        bottom: 20,
+        bottom: 40,
         left: 20,
       }
-    : { top: 300, left: 20 };
+    : { top: 310, left: 20 };
 
   return (
-    <Box
-      sx={(theme) => ({
-        position: "absolute",
-        zIndex: 100,
-        boxShadow: theme.shadows.xl,
-        backgroundColor: getNavigationBackgroundColor({
-          colorScheme,
-          colors: theme.colors,
-        }),
-        padding: "5px",
-        borderRadius: "15px 100px 100px 100px",
-        ...position,
+    <MapInteractions.Container
+      position={position}
+      backgroundColor={getNavigationBackgroundColor({
+        colorScheme,
+        colors: theme.colors,
       })}
     >
-      <Box
+      <MapInteractions.Button
         onClick={() => setLinesVisible(true)}
-        sx={(theme) => ({
-          color: getColor({
-            theme,
-            active: linesVisible === true,
-            colorScheme,
-          }),
-          borderRadius: "100px",
-          width: "40px",
-          height: "40px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: getBackgroundColor({
-            theme,
-            active: linesVisible === true,
-            colorScheme,
-          }),
-          transition: "background-color 250ms ease-in-out",
-          "&:hover": {
-            cursor: "pointer",
-          },
+        color={getColor({
+          theme,
+          active: linesVisible === true,
+          colorScheme,
         })}
+        backgroundColor={getBackgroundColor({
+          theme,
+          active: linesVisible === true,
+          colorScheme,
+        })}
+        active={linesVisible}
       >
         <TbRoute />
-      </Box>
-      <Box
+      </MapInteractions.Button>
+      <MapInteractions.Button
         onClick={() => setLinesVisible(false)}
-        sx={(theme) => ({
-          color: getColor({
-            theme,
-            active: linesVisible === false,
-            colorScheme,
-          }),
-          borderRadius: "100px",
-          width: "40px",
-          height: "40px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: getBackgroundColor({
-            theme,
-            active: linesVisible === false,
-            colorScheme,
-          }),
-          transition: "background-color 250ms ease-in-out",
-          "&:hover": {
-            cursor: "pointer",
-          },
+        color={getColor({
+          theme,
+          active: linesVisible === false,
+          colorScheme,
         })}
+        backgroundColor={getBackgroundColor({
+          theme,
+          active: linesVisible === false,
+          colorScheme,
+        })}
+        active={!linesVisible}
       >
         <TbRouteOff />
-      </Box>
-    </Box>
+      </MapInteractions.Button>
+    </MapInteractions.Container>
   );
 };

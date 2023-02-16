@@ -61,7 +61,7 @@ export const getBackgroundColor = ({
     if (colorScheme === "dark") {
       return theme.colors.gray[8];
     }
-    return theme.colors.gray[1];
+    return theme.white;
   }
   if (colorScheme === "dark") {
     return theme.colors.gray[9];
