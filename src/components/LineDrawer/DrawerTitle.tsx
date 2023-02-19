@@ -1,6 +1,6 @@
-import { ActionIcon, Box } from "@mantine/core";
+import { ActionIcon, Box, useMantineColorScheme } from "@mantine/core";
 import React from "react";
-import { IoChevronDown, IoChevronUp } from "react-icons/io5";
+import { IoChevronDown, IoChevronUp, IoClose } from "react-icons/io5";
 import { useLocation } from "react-router-dom";
 import { TransitTitle } from "../../common/TransitTitle";
 import { isMobile } from "react-device-detect";
@@ -9,12 +9,15 @@ export const DrawerTitle = ({
   handleClickHeader,
   setFullHeight,
   fullHeight,
+  onClose,
 }: {
   fullHeight: boolean;
   handleClickHeader(): void;
   setFullHeight(v: boolean): void;
+  onClose(): void;
 }) => {
   const location: any = useLocation();
+  const { colorScheme } = useMantineColorScheme();
 
   return (
     <Box
@@ -22,7 +25,7 @@ export const DrawerTitle = ({
       sx={{
         justifyContent: "center",
         alignItems: "center",
-        minWidth: isMobile ? "calc(100vw - 90px)" : "auto",
+        minWidth: isMobile ? "calc(100vw - 90px)" : "100%",
       }}
     >
       <Box
@@ -44,19 +47,27 @@ export const DrawerTitle = ({
           minWidth="85%"
         />
       </Box>
+      <Box sx={{ flex: 1 }} />
       {isMobile && (
         <>
-          <Box sx={{ flex: 1 }} />
           <ActionIcon
             size="lg"
-            variant="filled"
-            sx={{ margin: 10 }}
+            variant="light"
+            sx={(theme) => ({ margin: 10, color: theme.colors.gray[8] })}
             onClick={() => setFullHeight(!fullHeight)}
           >
             {fullHeight ? <IoChevronDown /> : <IoChevronUp />}
           </ActionIcon>
         </>
       )}
+      <ActionIcon
+        size="lg"
+        variant="light"
+        sx={(theme) => ({ margin: 10, color: colorScheme === 'dark' ? theme.colors.gray[4] : theme.colors.gray[8] })}
+        onClick={() => onClose()}
+      >
+        <IoClose />
+      </ActionIcon>
     </Box>
   );
 };

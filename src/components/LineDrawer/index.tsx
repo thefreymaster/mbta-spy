@@ -6,6 +6,7 @@ import {
   Loader,
   Space,
   Text,
+  ThemeIcon,
   Timeline,
   useMantineColorScheme,
 } from "@mantine/core";
@@ -50,11 +51,14 @@ const StopTitle = ({
       {stop?.attributes?.arrival_time && (
         <>
           <Box
-            sx={{
+            sx={(theme) => ({
               flex: 1,
               margin: "0px 10px 8px 10px",
-              borderBottom: "2px dashed #c0c0c024",
-            }}
+              borderBottom:
+                colorScheme === "dark"
+                  ? `2px dashed ${theme.colors.gray[7]}`
+                  : `2px dashed ${theme.colors.gray[4]}`,
+            })}
           />
           <Text
             sx={(theme) => ({
@@ -219,26 +223,38 @@ export const LineDrawer = (props: {
     return "28vh";
   };
 
+  const getIsStopActive = (index: number) => {
+    if(params.route_id === "Red"){
+      return direction_id === 1
+      ? index > currentStopIndex
+      : index < currentStopIndex;
+    }
+    return direction_id === 0
+    ? index > currentStopIndex
+    : index < currentStopIndex;
+  };
+
   return (
     <Drawer
       align="right"
       opened={!!params.transit_id}
-      onClose={() => {
-        if (isDesktop) {
-          props.onMove({
-            longitude: location?.state?.vehicle.attributes.longitude,
-            latitude: location?.state?.vehicle.attributes.latitude,
-            zoom: 13,
-          });
-        }
-        history.push(`/${params.transit_type}`);
-        props.setLineDrawerIsOpen(false);
-      }}
+      withCloseButton={false}
       title={
         <DrawerTitle
           handleClickHeader={handleClickHeader}
           fullHeight={fullHeight}
           setFullHeight={setFullHeight}
+          onClose={() => {
+            if (isDesktop) {
+              props.onMove({
+                longitude: location?.state?.vehicle.attributes.longitude,
+                latitude: location?.state?.vehicle.attributes.latitude,
+                zoom: 12,
+              });
+            }
+            history.push(`/`);
+            props.setLineDrawerIsOpen(false);
+          }}
         />
       }
       // @ts-ignore
@@ -271,6 +287,7 @@ export const LineDrawer = (props: {
         },
         title: {
           marginRight: "0px",
+          minWidth: "100%",
         },
         body: {
           backgroundColor:
@@ -283,6 +300,9 @@ export const LineDrawer = (props: {
             colorScheme === "dark"
               ? theme.colors.gray[9]
               : theme.colors.gray[2],
+        },
+        closeButton: {
+          color: "red",
         },
       })}
       className="drawer"
@@ -309,7 +329,9 @@ export const LineDrawer = (props: {
           >
             {data?.stops?.map((stop: any, index: number) => (
               <Timeline.Item
-                lineVariant={index === currentStopIndex ? "dashed" : "solid"}
+                lineVariant={
+                  index + 1 === currentStopIndex ? "dashed" : "solid"
+                }
                 onClick={() =>
                   props.onMove({
                     longitude: stop.attributes.longitude,
@@ -317,13 +339,28 @@ export const LineDrawer = (props: {
                     zoom: 14,
                   })
                 }
-                color="gray"
+                color="dark"
                 title={
                   <StopTitle
                     name={stop?.attributes?.name}
                     predictions={predictionsData?.combined}
                   />
                 }
+                // bullet={
+                //   <ThemeIcon
+                //     size={16}
+                //     sx={(theme) => ({
+                //       backgroundColor: getIsStopActive(index)
+                //         ? `#${location?.state?.route?.attributes?.color}`
+                //         : theme.colors.gray[2],
+                //       borderRadius: 1000,
+                //       border: "2px solid",
+                //       borderColor: "black",
+                //     })}
+                //   >
+                //     {" "}
+                //   </ThemeIcon>
+                // }
               >
                 {currentStopIndex === index && (
                   <Pulse color={location?.state?.route?.attributes?.color} />
