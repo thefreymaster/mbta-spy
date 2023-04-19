@@ -15,6 +15,7 @@ import "./live-map.css";
 import { LineStops } from "../LineStops";
 import { LinesToggle } from "../LinesToggle";
 import { DarkModeToggle } from "../../common/DarkModeToggle";
+import { getVehicle } from "../../utils/getVehicle";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAP_BOX_TOKEN || "";
 
@@ -37,7 +38,12 @@ const MapContent = (props: {
   const [lineRoute, setLineRoute]: any = React.useState();
   const [vehicleType, setVehicleType] = React.useState("");
 
-  const { isLoading, isError, error, data } = useQuery(
+  const {
+    isLoading,
+    isError,
+    error,
+    data,
+  } = useQuery(
     ["vehicles", params?.transit_type],
     () =>
       fetch(
@@ -106,6 +112,7 @@ const MapContent = (props: {
         setLineRoute={setLineRoute}
         lineDrawerIsOpen={props.lineDrawerIsOpen}
         setLineDrawerIsOpen={props.setLineDrawerIsOpen}
+        vehicles={data?.vehicles}
       />
       <LineShapes
         vehicleType={vehicleType}
@@ -161,9 +168,7 @@ export const LiveMap = () => {
   };
 
   return (
-    <div
-      className="map-container"
-    >
+    <div className="map-container">
       <VehicleTypeToggle />
       <LinesToggle
         setLinesVisible={setLinesVisible}

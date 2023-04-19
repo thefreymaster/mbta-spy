@@ -19,7 +19,7 @@ export const LinesToggle = ({
   const theme = useMantineTheme();
   const position = isMobile
     ? {
-        bottom: 40,
+        bottom: 20,
         left: 20,
       }
     : { top: 310, left: 20 };

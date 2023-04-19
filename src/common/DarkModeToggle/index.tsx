@@ -17,7 +17,7 @@ export const DarkModeToggle = () => {
 
   const position = isMobile
     ? {
-        bottom: 40,
+        bottom: 20,
         right: 20,
       }
     : { top: 420, left: 20 };

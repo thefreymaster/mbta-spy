@@ -18,6 +18,8 @@ import { getCurrentStopIndex } from "../../utils/getCurrentStopIndex";
 import { Time } from "../../common/Time";
 import { DrawerTitle } from "./DrawerTitle";
 import { getBackgroundColor } from "../../utils/getColors";
+import { LineAttributes } from "../LineAttributes";
+import { getVehicle } from "../../utils/getVehicle";
 
 const StopTitle = ({
   name,
@@ -124,6 +126,7 @@ export const LineDrawer = (props: {
   onMove(event: any): void;
   setLineDrawerIsOpen(event: boolean): void;
   lineDrawerIsOpen: boolean;
+  vehicles: any[];
 }) => {
   const { colorScheme } = useMantineColorScheme();
   const history: any = useHistory();
@@ -175,18 +178,17 @@ export const LineDrawer = (props: {
   );
 
   const stops = data?.stops;
-  const direction_id = location?.state?.vehicle.attributes?.direction_id;
+  const vehicle = getVehicle(props.vehicles, params?.transit_id);
+  const direction_id = vehicle?.attributes?.direction_id;
 
   const currentStopIndex =
-    getCurrentStopIndex(
-      location?.state?.vehicle?.relationships?.stop?.data?.id,
-      data?.stops
-    ) ?? 0;
+    getCurrentStopIndex(vehicle?.relationships?.stop?.data?.id, data?.stops) ??
+    0;
 
   const handleClickHeader = () =>
     props.onMove({
-      longitude: location?.state?.vehicle.attributes.longitude,
-      latitude: location?.state?.vehicle.attributes.latitude,
+      longitude: vehicle?.attributes.longitude,
+      latitude: vehicle?.attributes.latitude,
       zoom: 14,
     });
 
@@ -224,14 +226,14 @@ export const LineDrawer = (props: {
   };
 
   const getIsStopActive = (index: number) => {
-    if(params.route_id === "Red"){
+    if (params.route_id === "Red") {
       return direction_id === 1
-      ? index > currentStopIndex
-      : index < currentStopIndex;
+        ? index > currentStopIndex
+        : index < currentStopIndex;
     }
     return direction_id === 0
-    ? index > currentStopIndex
-    : index < currentStopIndex;
+      ? index > currentStopIndex
+      : index < currentStopIndex;
   };
 
   return (
@@ -247,8 +249,8 @@ export const LineDrawer = (props: {
           onClose={() => {
             if (isDesktop) {
               props.onMove({
-                longitude: location?.state?.vehicle.attributes.longitude,
-                latitude: location?.state?.vehicle.attributes.latitude,
+                longitude: vehicle?.attributes.longitude,
+                latitude: vehicle?.attributes.latitude,
                 zoom: 12,
               });
             }
@@ -313,6 +315,10 @@ export const LineDrawer = (props: {
         </Center>
       ) : (
         <>
+          <LineAttributes
+            speed={vehicle?.attributes?.speed}
+            bearing={vehicle?.attributes?.bearing}
+          />
           <Space h="md" />
           <Timeline
             reverseActive={getReverseActiveState()}
