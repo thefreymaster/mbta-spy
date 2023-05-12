@@ -16,6 +16,7 @@ import { LineStops } from "../LineStops";
 import { LinesToggle } from "../LinesToggle";
 import { DarkModeToggle } from "../../common/DarkModeToggle";
 import { getVehicle } from "../../utils/getVehicle";
+import Coffee from "../Coffee";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAP_BOX_TOKEN || "";
 
@@ -197,6 +198,7 @@ export const LiveMap = () => {
           linesVisible={linesVisible}
         />
       </Map>
+      <Coffee />
     </div>
   );
 };

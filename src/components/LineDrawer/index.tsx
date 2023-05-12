@@ -28,7 +28,7 @@ const StopTitle = ({
   name: string;
   predictions: any;
 }) => {
-  const [stop] = predictions.filter((prediction: any) => {
+  const [stop] = predictions?.filter((prediction: any) => {
     return (
       prediction?.attributes?.platform_name?.toLowerCase() ===
       name?.toLowerCase()
@@ -77,46 +77,6 @@ const StopTitle = ({
         </>
       )}
     </Box>
-  );
-};
-
-const TimelineItem = ({
-  index,
-  currentStopIndex,
-  onMove,
-  stop,
-  predictionsData,
-}: any) => {
-  const location: any = useLocation();
-
-  return (
-    <Timeline.Item
-      key={index}
-      lineVariant={index === currentStopIndex ? "dashed" : "solid"}
-      onClick={() =>
-        onMove({
-          longitude: stop.attributes.longitude,
-          latitude: stop.attributes.latitude,
-          zoom: 14,
-        })
-      }
-      color="gray"
-      title={
-        <StopTitle
-          name={stop?.attributes?.name}
-          predictions={predictionsData?.combined}
-        />
-      }
-    >
-      {currentStopIndex === index && (
-        <Pulse color={location?.state?.route?.attributes?.color} />
-      )}
-      <Box display="flex">
-        <Text size="xs" color="dimmed">
-          {stop?.attributes?.address}
-        </Text>
-      </Box>
-    </Timeline.Item>
   );
 };
 
@@ -345,28 +305,28 @@ export const LineDrawer = (props: {
                     zoom: 14,
                   })
                 }
-                color="dark"
+                color="gray"
                 title={
                   <StopTitle
                     name={stop?.attributes?.name}
                     predictions={predictionsData?.combined}
                   />
                 }
-                // bullet={
-                //   <ThemeIcon
-                //     size={16}
-                //     sx={(theme) => ({
-                //       backgroundColor: getIsStopActive(index)
-                //         ? `#${location?.state?.route?.attributes?.color}`
-                //         : theme.colors.gray[2],
-                //       borderRadius: 1000,
-                //       border: "2px solid",
-                //       borderColor: "black",
-                //     })}
-                //   >
-                //     {" "}
-                //   </ThemeIcon>
-                // }
+                bullet={
+                  <ThemeIcon
+                    size={16}
+                    sx={(theme) => ({
+                      backgroundColor: getIsStopActive(index)
+                        ? `#${location?.state?.route?.attributes?.color}`
+                        : theme.colors.gray[2],
+                      borderRadius: 1000,
+                      border: "2px solid",
+                      borderColor: "black",
+                    })}
+                  >
+                    {" "}
+                  </ThemeIcon>
+                }
               >
                 {currentStopIndex === index && (
                   <Pulse color={location?.state?.route?.attributes?.color} />
