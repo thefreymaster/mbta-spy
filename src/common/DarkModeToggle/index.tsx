@@ -2,7 +2,6 @@ import React from "react";
 
 import { Box, useMantineColorScheme, useMantineTheme } from "@mantine/core";
 import { isMobile } from "react-device-detect";
-import { TbRoute, TbRouteOff } from "react-icons/tb";
 import { MdDarkMode, MdOutlineBrightnessLow } from "react-icons/md";
 import {
   getBackgroundColor,

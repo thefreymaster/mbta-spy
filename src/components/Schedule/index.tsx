@@ -1,4 +1,12 @@
-import { Badge, Box, Button, Dialog, Table, Text } from "@mantine/core";
+import {
+  Badge,
+  Box,
+  Button,
+  Dialog,
+  Table,
+  Text,
+  useMantineColorScheme,
+} from "@mantine/core";
 import React from "react";
 import { useQuery } from "react-query";
 import { useLocation, useParams } from "react-router-dom";
@@ -51,7 +59,7 @@ const ActiveText = (props: {
   );
 };
 
-export const Predictions = (props: {
+export const Schedule = (props: {
   direction?: string;
   color?: string;
   onMove(event: any): void;
@@ -64,15 +72,14 @@ export const Predictions = (props: {
   } = useParams();
 
   const location: any = useLocation();
+  const { colorScheme } = useMantineColorScheme();
 
-  const { data, isLoading } = useQuery(
-    ["predictions", params?.trip_id],
+  const { data } = useQuery(
+    ["schedule", params?.trip_id],
     () =>
-      fetch(`/api/predictions/${params?.route_id}/${params?.trip_id}`).then(
-        (res) => {
-          return res.json();
-        }
-      ),
+      fetch(`/api/schedules/${params?.trip_id}`).then((res) => {
+        return res.json();
+      }),
     {
       enabled: !!params.route_id,
       retry: false,
@@ -89,82 +96,91 @@ export const Predictions = (props: {
   return (
     <>
       <Box
-        sx={() => ({
+        sx={(theme) => ({
           padding: "18px",
           position: "sticky",
           bottom: "0px",
           zIndex: 100,
-          backgroundColor: "white",
+          backgroundColor:
+            colorScheme === "dark" ? theme.colors.gray[8] : "white",
           boxShadow:
             "-1px -3px 9px rgb(0 0 0 / 5%), rgb(0 0 0 / 5%) 0px 20px 25px -5px, rgb(0 0 0 / 4%) 0px 10px 10px -5px",
         })}
       >
         <Button
           fullWidth
-          color="gray"
+          // color="gray"
           variant="outline"
           sx={() => ({
             position: "sticky",
             bottom: "20px",
             left: "20px",
             borderColor: `#${props.color}`,
-            color: `#${props.color}`,
+            color: colorScheme === "dark" ? "white" : `#${props.color}`,
+            borderWidth: "2px",
           })}
           onClick={() => setShowPredictions(true)}
         >
-          Predictions
+          Schedule
         </Button>
       </Box>
-      {showPredictions && (
-        <Dialog
-          position={{ bottom: 20, left: isMobile ? "10px" : "20px" }}
-          style={{ maxWidth: "calc(100% - 40px)" }}
-          opened
-          onClose={() => setShowPredictions(false)}
-          size="lg"
-          radius="md"
-          withCloseButton
-        >
-          <Table highlightOnHover captionSide="bottom">
-            <caption>Predicted times</caption>
-            <thead>
-              <tr>
-                <th>Platform</th>
-                <th>Arrival</th>
-                <th>Departure</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data?.combined?.map((prediction: IPrediction) => (
-                <tr
-                  key={prediction.id}
-                  onClick={() =>
-                    props.onMove({
-                      longitude: prediction.attributes.longitude,
-                      latitude: prediction.attributes.latitude,
-                      zoom: 14,
-                    })
-                  }
-                >
-                  <td>
+      <Dialog
+        position={{ bottom: 20, left: isMobile ? "10px" : "20px" }}
+        style={{ maxWidth: "calc(100% - 40px)" }}
+        opened={showPredictions}
+        onClose={() => setShowPredictions(false)}
+        size="lg"
+        radius="md"
+        withCloseButton
+        // styles={(theme) => ({
+        //   root: {
+        //     backgroundColor:
+        //       colorScheme === "dark"
+        //         ? theme.colors.gray[9]
+        //         : theme.colors.gray[2],
+        //   },
+        // })}
+      >
+        <Table highlightOnHover captionSide="bottom">
+          <caption>Scheduled times</caption>
+          <thead>
+            <tr>
+              <th>Platform</th>
+              <th>Arrival</th>
+              {/* <th>Departure</th> */}
+            </tr>
+          </thead>
+          <tbody>
+            {data?.combined?.map((prediction: IPrediction) => (
+              <tr
+                key={prediction.id}
+                onClick={() =>
+                  props.onMove({
+                    longitude: prediction.attributes.longitude,
+                    latitude: prediction.attributes.latitude,
+                    zoom: 14,
+                  })
+                }
+              >
+                <td>
+                  <ActiveText
+                    predictionStopId={prediction.relationships.stop.data.id}
+                    vehicleStopId={vehicleStopId}
+                  >
+                    {prediction.attributes.platform_name}
+                  </ActiveText>
+                </td>
+                <td>
+                  {prediction.attributes.arrival_time && (
                     <ActiveText
                       predictionStopId={prediction.relationships.stop.data.id}
                       vehicleStopId={vehicleStopId}
                     >
-                      {prediction.attributes.platform_name}
+                      <Time>{prediction.attributes.arrival_time}</Time>
                     </ActiveText>
-                  </td>
-                  <td>
-                    {prediction.attributes.arrival_time && (
-                      <ActiveText
-                        predictionStopId={prediction.relationships.stop.data.id}
-                        vehicleStopId={vehicleStopId}
-                      >
-                        <Time>{prediction.attributes.arrival_time}</Time>
-                      </ActiveText>
-                    )}
-                  </td>
-                  <td>
+                  )}
+                </td>
+                {/* <td>
                     {prediction.attributes.departure_time && (
                       <ActiveText
                         predictionStopId={prediction.relationships.stop.data.id}
@@ -173,13 +189,12 @@ export const Predictions = (props: {
                         <Time>{prediction.attributes.departure_time}</Time>
                       </ActiveText>
                     )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Dialog>
-      )}
+                  </td> */}
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </Dialog>
     </>
   );
 };

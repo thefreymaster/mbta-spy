@@ -20,6 +20,7 @@ import { DrawerTitle } from "./DrawerTitle";
 import { getBackgroundColor } from "../../utils/getColors";
 import { LineAttributes } from "../LineAttributes";
 import { getVehicle } from "../../utils/getVehicle";
+import { Schedule } from "../Schedule";
 
 const StopTitle = ({
   name,
@@ -341,6 +342,11 @@ export const LineDrawer = (props: {
           </Timeline>
         </>
       )}
+      <Schedule
+        color={location?.state?.route?.attributes?.color}
+        direction={route?.attributes?.direction_names[direction_id]}
+        onMove={props.onMove}
+      />
     </Drawer>
   );
 };

@@ -122,6 +122,47 @@ app.get("/api/predictions/:route_id/:trip_id", async (req, res) => {
   });
 });
 
+app.get("/api/schedules/:trip_id", async (req, res) => {
+  const { trip_id } = req.params;
+
+  const response = await axios.get(
+    `https://api-v3.mbta.com/predictions?include=stop&filter%5Btrip%5D=${trip_id}&api_key=${process.env.MBTA_TOKEN}`
+  );
+  const schedule = response.data;
+  const included = response.data.included;
+
+  const newSchedule = schedule.data.reduce(
+    (collector, prediction, index) => {
+      const [stop] = included.filter(
+        (include) => include.id === prediction?.relationships?.stop?.data?.id
+      );
+      const combined = {
+        attributes: {
+          departure_time: prediction?.attributes?.departure_time,
+          arrival_time: prediction?.attributes?.arrival_time,
+          platform_name: stop?.attributes?.name,
+          description: stop?.attributes?.description,
+          latitude: stop?.attributes?.latitude,
+          longitude: stop?.attributes?.longitude,
+          ...stop,
+        },
+        id: prediction?.id,
+        relationships: {
+          ...prediction.relationships,
+        },
+      };
+      collector.push(combined);
+      return collector;
+    },
+    []
+  );
+
+  return res.send({
+    schedule: schedule.data,
+    combined: newSchedule
+  });
+});
+
 app.get("/*", function (request, response) {
   response.sendFile(path.resolve(__dirname, "build/index.html"));
 });

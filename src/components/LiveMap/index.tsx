@@ -92,7 +92,7 @@ const MapContent = (props: {
   if (isLoading || isLoadingRoutes) {
     return (
       <Center style={{ height: "100vh", width: "100vw" }}>
-        <Loader color="red" size="xl" />
+        <Loader color="gray" size="xl" />
       </Center>
     );
   }
