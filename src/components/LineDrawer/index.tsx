@@ -183,7 +183,7 @@ export const LineDrawer = (props: {
     if (fullHeight) {
       return "90vh";
     }
-    return "28vh";
+    return "50vh";
   };
 
   const getIsStopActive = (index: number) => {
@@ -345,6 +345,7 @@ export const LineDrawer = (props: {
       <Schedule
         color={location?.state?.route?.attributes?.color}
         direction={route?.attributes?.direction_names[direction_id]}
+        stops={data?.stops}
         onMove={props.onMove}
       />
     </Drawer>

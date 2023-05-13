@@ -29,16 +29,14 @@ const App = () => {
       toggleColorScheme={toggleColorScheme}
     >
       <MantineProvider
-        theme={{ colorScheme: "dark" }}
+        theme={{ colorScheme }}
         withGlobalStyles
         withNormalizeCSS
       >
         <QueryClientProvider client={queryClient}>
           <AppShell
             sx={{ padding: "0px !important", minHeight: "100%" }}
-            header={
-              <AppHeader />
-            }
+            header={<AppHeader />}
           >
             <Router />
           </AppShell>

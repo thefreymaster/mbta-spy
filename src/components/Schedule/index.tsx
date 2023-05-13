@@ -10,11 +10,9 @@ import {
 import React from "react";
 import { useQuery } from "react-query";
 import { useLocation, useParams } from "react-router-dom";
-import { getCurrentStopIndex } from "../../utils/getCurrentStopIndex";
-import { isDesktop } from "react-device-detect";
 import { isMobile } from "react-device-detect";
 
-interface IPrediction {
+interface ISchedule {
   id: string;
   attributes: {
     arrival_time: string;
@@ -63,6 +61,7 @@ export const Schedule = (props: {
   direction?: string;
   color?: string;
   onMove(event: any): void;
+  stops: Array<object>;
 }) => {
   const params: {
     transit_type: string;
@@ -93,6 +92,8 @@ export const Schedule = (props: {
 
   const [showPredictions, setShowPredictions] = React.useState(false);
 
+  console.log(props.stops);
+
   return (
     <>
       <Box
@@ -121,7 +122,7 @@ export const Schedule = (props: {
           })}
           onClick={() => setShowPredictions(true)}
         >
-          Schedule
+          Scheduled Times
         </Button>
       </Box>
       <Dialog
@@ -132,66 +133,50 @@ export const Schedule = (props: {
         size="lg"
         radius="md"
         withCloseButton
-        // styles={(theme) => ({
-        //   root: {
-        //     backgroundColor:
-        //       colorScheme === "dark"
-        //         ? theme.colors.gray[9]
-        //         : theme.colors.gray[2],
-        //   },
-        // })}
       >
         <Table highlightOnHover captionSide="bottom">
           <caption>Scheduled times</caption>
           <thead>
             <tr>
-              <th>Platform</th>
-              <th>Arrival</th>
-              {/* <th>Departure</th> */}
+              <th>Station</th>
+              <th>Scheduled Arrival</th>
             </tr>
           </thead>
           <tbody>
-            {data?.combined?.map((prediction: IPrediction) => (
-              <tr
-                key={prediction.id}
-                onClick={() =>
-                  props.onMove({
-                    longitude: prediction.attributes.longitude,
-                    latitude: prediction.attributes.latitude,
-                    zoom: 14,
-                  })
-                }
-              >
-                <td>
-                  <ActiveText
-                    predictionStopId={prediction.relationships.stop.data.id}
-                    vehicleStopId={vehicleStopId}
-                  >
-                    {prediction.attributes.platform_name}
-                  </ActiveText>
-                </td>
-                <td>
-                  {prediction.attributes.arrival_time && (
+            {data?.combined?.map((schedule: ISchedule) => {
+              console.log({schedule});
+              return (
+                <tr
+                  key={schedule.id}
+                  onClick={() =>
+                    props.onMove({
+                      longitude: schedule.attributes.longitude,
+                      latitude: schedule.attributes.latitude,
+                      zoom: 14,
+                    })
+                  }
+                >
+                  <td>
                     <ActiveText
-                      predictionStopId={prediction.relationships.stop.data.id}
+                      predictionStopId={schedule.relationships.stop.data.id}
                       vehicleStopId={vehicleStopId}
                     >
-                      <Time>{prediction.attributes.arrival_time}</Time>
+                      {schedule.attributes.platform_name}
                     </ActiveText>
-                  )}
-                </td>
-                {/* <td>
-                    {prediction.attributes.departure_time && (
+                  </td>
+                  <td>
+                    {schedule.attributes.arrival_time && (
                       <ActiveText
-                        predictionStopId={prediction.relationships.stop.data.id}
+                        predictionStopId={schedule.relationships.stop.data.id}
                         vehicleStopId={vehicleStopId}
                       >
-                        <Time>{prediction.attributes.departure_time}</Time>
+                        <Time>{schedule.attributes.arrival_time}</Time>
                       </ActiveText>
                     )}
-                  </td> */}
-              </tr>
-            ))}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </Table>
       </Dialog>

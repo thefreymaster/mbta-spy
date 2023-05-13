@@ -125,42 +125,48 @@ app.get("/api/predictions/:route_id/:trip_id", async (req, res) => {
 app.get("/api/schedules/:trip_id", async (req, res) => {
   const { trip_id } = req.params;
 
-  const response = await axios.get(
-    `https://api-v3.mbta.com/predictions?include=stop&filter%5Btrip%5D=${trip_id}&api_key=${process.env.MBTA_TOKEN}`
-  );
-  const schedule = response.data;
-  const included = response.data.included;
+  try {
+    const response = await axios.get(
+      `https://api-v3.mbta.com/schedules?include=prediction,stop&filter%5Btrip%5D=${trip_id}&api_key=${process.env.MBTA_TOKEN}`
+    );
+    const schedule = response.data;
+    const included = response.data.included;
 
-  const newSchedule = schedule.data.reduce(
-    (collector, prediction, index) => {
+    const newSchedule = schedule.data.reduce((collector, schedule, index) => {
       const [stop] = included.filter(
-        (include) => include.id === prediction?.relationships?.stop?.data?.id
+        (include) => include.id === schedule?.relationships?.stop?.data?.id
+      );
+      const [prediction] = included.filter(
+        (include) =>
+          include.id === schedule?.relationships?.prediction?.data?.id
       );
       const combined = {
         attributes: {
-          departure_time: prediction?.attributes?.departure_time,
-          arrival_time: prediction?.attributes?.arrival_time,
+          departure_time: schedule?.attributes?.departure_time,
+          arrival_time: schedule?.attributes?.arrival_time,
           platform_name: stop?.attributes?.name,
           description: stop?.attributes?.description,
           latitude: stop?.attributes?.latitude,
           longitude: stop?.attributes?.longitude,
+          prediction: { ...prediction },
           ...stop,
         },
-        id: prediction?.id,
+        id: schedule?.id,
         relationships: {
-          ...prediction.relationships,
+          ...schedule.relationships,
         },
       };
       collector.push(combined);
       return collector;
-    },
-    []
-  );
+    }, []);
 
-  return res.send({
-    schedule: schedule.data,
-    combined: newSchedule
-  });
+    return res.send({
+      schedule: schedule.data,
+      combined: newSchedule,
+    });
+  } catch (error) {
+    debugger;
+  }
 });
 
 app.get("/*", function (request, response) {
