@@ -95,8 +95,6 @@ export const Schedule = (props: {
     }
   );
 
-  console.log({data})
-
   const vehicleStopId = location?.state?.vehicle?.relationships?.stop?.data?.id;
 
   const [showPredictions, setShowPredictions] = React.useState(false);
@@ -158,7 +156,6 @@ export const Schedule = (props: {
           </thead>
           <tbody>
             {data?.combined?.reverse().map((schedule: ISchedule) => {
-              console.log({schedule})
               return (
                 <tr
                   key={schedule.id}
