@@ -342,12 +342,12 @@ export const LineDrawer = (props: {
           </Timeline>
         </>
       )}
-      <Schedule
+      {/* <Schedule
         color={location?.state?.route?.attributes?.color}
         direction={route?.attributes?.direction_names[direction_id]}
         stops={data?.stops}
         onMove={props.onMove}
-      />
+      /> */}
     </Drawer>
   );
 };

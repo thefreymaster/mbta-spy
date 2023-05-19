@@ -11,6 +11,7 @@ import React from "react";
 import { useQuery } from "react-query";
 import { useLocation, useParams } from "react-router-dom";
 import { isMobile } from "react-device-detect";
+import Pulse from "../../common/Pulse";
 
 interface ISchedule {
   id: string;
@@ -45,14 +46,20 @@ const Time = (props: { children: string }) => {
 const ActiveText = (props: {
   vehicleStopId: string;
   predictionStopId: string;
+  name: "station" | "time";
   children: any;
 }) => {
+  // const location: any = useLocation();
+
   return (
     <Text
       size="xs"
       weight={props.vehicleStopId === props.predictionStopId ? 800 : 400}
     >
       {props.children}
+      {/* {props.vehicleStopId === props.predictionStopId && props.name === "time" && (
+        <Pulse color={location?.state?.route?.attributes?.color} />
+      )} */}
     </Text>
   );
 };
@@ -80,7 +87,7 @@ export const Schedule = (props: {
         return res.json();
       }),
     {
-      enabled: !!params.route_id,
+      enabled: !!params.trip_id,
       retry: false,
       refetchOnMount: false,
       refetchOnReconnect: false,
@@ -88,11 +95,18 @@ export const Schedule = (props: {
     }
   );
 
+  console.log({data})
+
   const vehicleStopId = location?.state?.vehicle?.relationships?.stop?.data?.id;
 
   const [showPredictions, setShowPredictions] = React.useState(false);
 
-  console.log(props.stops);
+  const handleShowPredictions = () => {
+    if (showPredictions) {
+      return setShowPredictions(false);
+    }
+    return setShowPredictions(true);
+  };
 
   return (
     <>
@@ -120,9 +134,9 @@ export const Schedule = (props: {
             color: colorScheme === "dark" ? "white" : `#${props.color}`,
             borderWidth: "2px",
           })}
-          onClick={() => setShowPredictions(true)}
+          onClick={handleShowPredictions}
         >
-          Scheduled Times
+          {showPredictions ? "Close" : "Scheduled Times"}
         </Button>
       </Box>
       <Dialog
@@ -143,8 +157,8 @@ export const Schedule = (props: {
             </tr>
           </thead>
           <tbody>
-            {data?.combined?.map((schedule: ISchedule) => {
-              console.log({schedule});
+            {data?.combined?.reverse().map((schedule: ISchedule) => {
+              console.log({schedule})
               return (
                 <tr
                   key={schedule.id}
@@ -160,6 +174,7 @@ export const Schedule = (props: {
                     <ActiveText
                       predictionStopId={schedule.relationships.stop.data.id}
                       vehicleStopId={vehicleStopId}
+                      name="station"
                     >
                       {schedule.attributes.platform_name}
                     </ActiveText>
@@ -169,6 +184,7 @@ export const Schedule = (props: {
                       <ActiveText
                         predictionStopId={schedule.relationships.stop.data.id}
                         vehicleStopId={vehicleStopId}
+                        name="time"
                       >
                         <Time>{schedule.attributes.arrival_time}</Time>
                       </ActiveText>
