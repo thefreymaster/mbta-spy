@@ -114,7 +114,6 @@ export const LineShapes = (props: {
     attributes: { polyline: getCoordinates(shape.attributes.polyline) },
   }));
 
-  // @ts-ignore
   const uniqueShapes: any = [
     ...new Map(
       parsedShapes?.map((shape: any) => [shape.length, shape])

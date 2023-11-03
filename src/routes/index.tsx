@@ -3,20 +3,22 @@ import { LiveMap } from "../components/LiveMap";
 
 const Router = () => {
   return (
-    <Switch>
-      <Route exact path="/:transit_type">
-        <LiveMap />
-      </Route>
-      <Route exact path="/:transit_type/:route_id/:transit_id/:trip_id">
-        <LiveMap />
-      </Route>
-      <Route exact path="/">
-        <LiveMap />
-      </Route>
-      <Route exact path="/*">
-        <Redirect to="/" />
-      </Route>
-    </Switch>
+    <>
+      <Switch>
+        <Route exact path="/:transit_type">
+          <LiveMap />
+        </Route>
+        <Route exact path="/:transit_type/:route_id/:transit_id/:trip_id">
+          <LiveMap />
+        </Route>
+        <Route exact path="/">
+          <LiveMap />
+        </Route>
+        <Route exact path="/*">
+          <Redirect to="/" />
+        </Route>
+      </Switch>
+    </>
   );
 };
 
