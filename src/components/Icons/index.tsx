@@ -23,6 +23,7 @@ export const CommuterRail = (props: ITransitIcon) => (
     style={{
       ...style,
       transform: props.transform,
+      border: '2px solid white',
       backgroundColor: `#${props.backgroundColor}`,
     }}
     className="marker"
@@ -52,6 +53,7 @@ export const Bus = (props: ITransitIcon) => (
     style={{
       ...style,
       transform: props.transform,
+      border: '2px solid white',
       backgroundColor: `#${props.backgroundColor}`,
     }}
     className="marker"
@@ -82,6 +84,8 @@ export const Subway = (props: ITransitIcon) => (
   <div
     style={{
       ...style,
+      border: '2px solid white',
+      boxShadow: '0 1px 3px rgb(0 0 0 / 5%), rgb(0 0 0 / 5%) 0px 20px 25px -5px, rgb(0 0 0 / 4%) 0px 10px 10px -5px',
       transform: props.transform,
       backgroundColor: `#${props.backgroundColor}`,
     }}
@@ -112,6 +116,7 @@ export const LiteRail = (props: ITransitIcon) => (
     style={{
       ...style,
       transform: props.transform,
+      border: '2px solid white',
       backgroundColor: `#${props.backgroundColor}`,
     }}
     className="marker"

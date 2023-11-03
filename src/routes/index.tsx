@@ -7,7 +7,7 @@ const Router = () => {
       <Route exact path="/:transit_type">
         <LiveMap />
       </Route>
-      <Route exact path="/:transit_type/:route_id/:transit_id">
+      <Route exact path="/:transit_type/:route_id/:transit_id/:trip_id">
         <LiveMap />
       </Route>
       <Route exact path="/">

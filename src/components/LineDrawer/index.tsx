@@ -1,114 +1,127 @@
 import React from "react";
 import {
-  Avatar,
-  Badge,
   Box,
   Center,
-  Dialog,
   Drawer,
   Loader,
   Space,
   Text,
+  ThemeIcon,
   Timeline,
-  Title,
+  useMantineColorScheme,
 } from "@mantine/core";
-import { isDesktop } from "react-device-detect";
-import { TransitIcon } from "../LiveMarker";
-import { useQuery } from "react-query";
+import { isDesktop, isMobile } from "react-device-detect";
+import { useQuery, useQueryClient } from "react-query";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import { io } from "socket.io-client";
 import Pulse from "../../common/Pulse";
-import { VehicleInformationDialog } from "../VehicleInformation/index";
+import { getCurrentStopIndex } from "../../utils/getCurrentStopIndex";
+import { Time } from "../../common/Time";
+import { DrawerTitle } from "./DrawerTitle";
+import { getBackgroundColor } from "../../utils/getColors";
+import { LineAttributes } from "../LineAttributes";
+import { getVehicle } from "../../utils/getVehicle";
+import { Schedule } from "../Schedule";
 
-const socket = io(window.location.origin);
-
-export const TransitTitle = (props: {
-  type: number;
-  color: string;
-  label: string;
-  description?: string;
+const StopTitle = ({
+  name,
+  predictions,
+}: {
+  name: string;
+  predictions: any;
 }) => {
+  const [stop] = predictions?.filter((prediction: any) => {
+    return (
+      prediction?.attributes?.platform_name?.toLowerCase() ===
+      name?.toLowerCase()
+    );
+  });
+  const { colorScheme } = useMantineColorScheme();
+
   return (
-    <Box
-      sx={() => ({
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: `#${props?.color}`,
-        color: "white",
-        borderRadius: "100px 20px 100px 100px",
-        padding: "0px 20px 0px 0px",
-      })}
-    >
-      <Avatar radius="xl" style={{ border: `3px solid #${props.color}` }}>
-        <TransitIcon
-          value={props.type}
-          color={props.color}
-          style={{ display: "flex" }}
-        />
-      </Avatar>
-      <Title
-        sx={() => ({
-          marginLeft: 5,
-          minWidth: "40px",
+    <Box display="flex">
+      <Text
+        sx={(theme) => ({
+          color:
+            colorScheme === "dark"
+              ? theme.colors.gray[5]
+              : theme.colors.gray[9],
         })}
-        order={6}
+        size="xs"
+        fw={700}
       >
-        {props.label}
-      </Title>
-      <Title
-        sx={() => ({
-          marginLeft: 5,
-          textOverflow: "ellipsis",
-          overflow: "hidden",
-          whiteSpace: "nowrap",
-          maxWidth: "160px",
-        })}
-        order={6}
-      >
-        {props.description}
-      </Title>
+        {name}
+      </Text>
+      {stop?.attributes?.arrival_time && (
+        <>
+          <Box
+            sx={(theme) => ({
+              flex: 1,
+              margin: "0px 10px 8px 10px",
+              borderBottom:
+                colorScheme === "dark"
+                  ? `2px dashed ${theme.colors.gray[7]}`
+                  : `2px dashed ${theme.colors.gray[4]}`,
+            })}
+          />
+          <Text
+            sx={(theme) => ({
+              color:
+                colorScheme === "dark"
+                  ? theme.colors.gray[5]
+                  : theme.colors.gray[9],
+            })}
+            size="xs"
+            fw={700}
+          >
+            <Time>{stop?.attributes?.arrival_time}</Time>
+          </Text>
+        </>
+      )}
     </Box>
   );
-};
-
-const getCurrentStopIndex = (currentStopId: string, stops: any[]) => {
-  if (!stops) {
-    return -1;
-  }
-  let index;
-  stops?.map((stop: any, stopIndex: number) =>
-    stop?.relationships?.child_stops?.data?.map((childStop: any) => {
-      if (childStop?.id === currentStopId) {
-        index = stopIndex;
-      }
-    })
-  );
-  return index;
 };
 
 export const LineDrawer = (props: {
   lineRoute?: any;
   setLineRoute(s: any): void;
   onMove(event: any): void;
+  setLineDrawerIsOpen(event: boolean): void;
+  lineDrawerIsOpen: boolean;
+  vehicles: any[];
 }) => {
+  const { colorScheme } = useMantineColorScheme();
   const history: any = useHistory();
   const location: any = useLocation();
-  // const [vehicle, setVehicle]: any = React.useState();
+  const params: {
+    transit_type: string;
+    route_id: string;
+    transit_id: string;
+    trip_id: string;
+  } = useParams();
 
-  const params: { transit_type: string; route_id: string; transit_id: string } =
-    useParams();
+  const queryClient = useQueryClient();
+  const { routes }: any = queryClient.getQueryData("routes");
+  const [route] = routes.filter(
+    (_route: { id: string }) => _route?.id === params?.route_id
+  );
+  const [fullHeight, setFullHeight] = React.useState(false);
 
-  // React.useEffect(() => {
-  //   socket.on(params.transit_id, ({ data }: { data: any }) => {
-  //     const parsed = JSON.parse(data);
-  //     setVehicle(parsed);
-  //   });
-
-  //   return function cleanUp() {
-  //     socket.disconnect();
-  //   };
-  // }, [params.transit_id]);
+  const { data: predictionsData, isLoading: predictionsIsLoading } = useQuery(
+    ["predictions", params?.trip_id],
+    () =>
+      fetch(`/api/predictions/${params?.route_id}/${params?.trip_id}`).then(
+        (res) => {
+          return res.json();
+        }
+      ),
+    {
+      enabled: !!params.route_id,
+      retry: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const { isLoading, data } = useQuery(
     ["stops", params.route_id],
@@ -126,118 +139,215 @@ export const LineDrawer = (props: {
   );
 
   const stops = data?.stops;
-  const direction = location?.state?.vehicle.attributes?.direction_id;
+  const vehicle = getVehicle(props.vehicles, params?.transit_id);
+  const direction_id = vehicle?.attributes?.direction_id;
 
   const currentStopIndex =
-    getCurrentStopIndex(
-      location?.state?.vehicle?.relationships?.stop?.data?.id,
-      data?.stops
-    ) ?? 0;
+    getCurrentStopIndex(vehicle?.relationships?.stop?.data?.id, data?.stops) ??
+    0;
+
+  const handleClickHeader = () =>
+    props.onMove({
+      longitude: vehicle?.attributes.longitude,
+      latitude: vehicle?.attributes.latitude,
+      zoom: 14,
+    });
+
+  const getReverseActiveState = (): boolean => {
+    if (params.route_id === "Red") {
+      if (direction_id === 0) {
+        return false;
+      }
+      return true;
+    } else if (direction_id === 0) {
+      return true;
+    }
+    return false;
+  };
+
+  const getActiveState = () => {
+    if (params.route_id === "Red") {
+      return direction_id === 1
+        ? stops?.length - currentStopIndex - 1
+        : currentStopIndex;
+    }
+    return direction_id === 0
+      ? stops?.length - currentStopIndex - 1
+      : currentStopIndex;
+  };
+
+  const getSize = () => {
+    if (isDesktop) {
+      return "40vh";
+    }
+    if (fullHeight) {
+      return "90vh";
+    }
+    return "50vh";
+  };
+
+  const getIsStopActive = (index: number) => {
+    if (params.route_id === "Red") {
+      return direction_id === 1
+        ? index > currentStopIndex
+        : index < currentStopIndex;
+    }
+    return direction_id === 0
+      ? index > currentStopIndex
+      : index < currentStopIndex;
+  };
 
   return (
     <Drawer
-      opened={!!params.transit_id && isDesktop}
-      onClose={() => {
-        props.onMove({
-          longitude: location?.state?.vehicle.attributes.longitude,
-          latitude: location?.state?.vehicle.attributes.latitude,
-          zoom: 13,
-        });
-        history.push("/");
-      }}
+      align="right"
+      opened={!!params.transit_id}
+      withCloseButton={false}
       title={
-        <TransitTitle
-          color={location?.state?.route?.attributes?.color}
-          label={location?.state?.vehicle?.attributes?.label}
-          type={location?.state?.route?.attributes?.type}
-          description={
-            location?.state?.route?.attributes?.short_name === ""
-              ? location?.state?.route?.attributes?.long_name
-              : location?.state?.route?.attributes?.short_name
-          }
+        <DrawerTitle
+          handleClickHeader={handleClickHeader}
+          fullHeight={fullHeight}
+          setFullHeight={setFullHeight}
+          onClose={() => {
+            if (isDesktop) {
+              props.onMove({
+                longitude: vehicle?.attributes.longitude,
+                latitude: vehicle?.attributes.latitude,
+                zoom: 12,
+              });
+            }
+            history.push(`/`);
+            props.setLineDrawerIsOpen(false);
+          }}
         />
       }
-      padding="xl"
-      size="lg"
-      position="right"
+      // @ts-ignore
+      padding={isMobile ? "xl" : "none"}
+      size={getSize()}
+      position={isMobile ? "bottom" : "right"}
       withOverlay={false}
       sx={() => ({ overflow: "scroll" })}
-      styles={() => ({
+      styles={(theme) => ({
         drawer: {
-          borderRadius: "20px",
-          margin: "20px",
+          borderRadius: isMobile ? "0px" : "20px",
+          margin: isMobile ? "0px" : "20px",
+          backgroundColor:
+            colorScheme === "dark"
+              ? theme.colors.gray[9]
+              : theme.colors.gray[2],
         },
         header: {
           padding: "18px",
           position: "sticky",
           top: "0px",
           zIndex: 100,
-          backgroundColor: "white",
+          backgroundColor: getBackgroundColor({
+            theme,
+            active: true,
+            colorScheme,
+          }),
           boxShadow:
             "0 1px 3px rgb(0 0 0 / 5%), rgb(0 0 0 / 5%) 0px 20px 25px -5px, rgb(0 0 0 / 4%) 0px 10px 10px -5px",
+        },
+        title: {
+          marginRight: "0px",
+          minWidth: "100%",
+        },
+        body: {
+          backgroundColor:
+            colorScheme === "dark"
+              ? theme.colors.gray[9]
+              : theme.colors.gray[2],
+        },
+        overlay: {
+          backgroundColor:
+            colorScheme === "dark"
+              ? theme.colors.gray[9]
+              : theme.colors.gray[2],
+        },
+        closeButton: {
+          color: "red",
         },
       })}
       className="drawer"
     >
-      {isLoading ? (
+      {isLoading || predictionsIsLoading ? (
         <Center sx={() => ({ minHeight: "100%" })}>
           <Loader color="gray" />
         </Center>
       ) : (
         <>
+          <LineAttributes
+            speed={vehicle?.attributes?.speed}
+            bearing={vehicle?.attributes?.bearing}
+          />
           <Space h="md" />
           <Timeline
-            reverseActive={direction === 1}
-            active={
-              direction === 0
-                ? currentStopIndex
-                : stops?.length - currentStopIndex - 1
-            }
-            bulletSize={24}
+            reverseActive={getReverseActiveState()}
+            active={getActiveState()}
+            bulletSize={16}
             lineWidth={2}
             sx={() => ({
               padding: "0px 32px 32px 32px",
+              "&:hover": {
+                cursor: "pointer",
+              },
             })}
+            align="right"
           >
-            {data?.stops?.map((stop: any, index: number) => {
-              return (
-                <Timeline.Item
-                  lineVariant={index === currentStopIndex ? "dashed" : "solid"}
-                  color="gray"
-                  bullet={
-                    <Box>
-                      {currentStopIndex === index && (
-                        <Pulse
-                          color={location?.state?.route?.attributes?.color}
-                        />
-                      )}
-                      <TransitIcon
-                        value={location?.state?.route?.attributes?.type}
-                        style={{ display: "flex" }}
-                        onClick={() =>
-                          props.onMove({
-                            longitude: stop.attributes.longitude,
-                            latitude: stop.attributes.latitude,
-                            zoom: 14,
-                          })
-                        }
-                      />
-                    </Box>
-                  }
-                  title={stop?.attributes?.name}
-                >
+            {data?.stops?.map((stop: any, index: number) => (
+              <Timeline.Item
+                lineVariant={
+                  index + 1 === currentStopIndex ? "dashed" : "solid"
+                }
+                onClick={() =>
+                  props.onMove({
+                    longitude: stop.attributes.longitude,
+                    latitude: stop.attributes.latitude,
+                    zoom: 14,
+                  })
+                }
+                color="gray"
+                title={
+                  <StopTitle
+                    name={stop?.attributes?.name}
+                    predictions={predictionsData?.combined}
+                  />
+                }
+                bullet={
+                  <ThemeIcon
+                    size={16}
+                    sx={(theme) => ({
+                      backgroundColor: getIsStopActive(index)
+                        ? `#${location?.state?.route?.attributes?.color}`
+                        : theme.colors.gray[2],
+                      borderRadius: 1000,
+                      border: "2px solid",
+                      borderColor: "black",
+                    })}
+                  >
+                    {" "}
+                  </ThemeIcon>
+                }
+              >
+                {currentStopIndex === index && (
+                  <Pulse color={location?.state?.route?.attributes?.color} />
+                )}
+                <Box display="flex">
                   <Text size="xs" color="dimmed">
                     {stop?.attributes?.address}
                   </Text>
-                </Timeline.Item>
-              );
-            })}
+                </Box>
+              </Timeline.Item>
+            ))}
           </Timeline>
         </>
       )}
-      {/* <VehicleInformationDialog /> */}
+      {/* <Schedule
+        color={location?.state?.route?.attributes?.color}
+        direction={route?.attributes?.direction_names[direction_id]}
+        stops={data?.stops}
+        onMove={props.onMove}
+      /> */}
     </Drawer>
   );
 };
-
-// compare vehicle stop ID to stops ID

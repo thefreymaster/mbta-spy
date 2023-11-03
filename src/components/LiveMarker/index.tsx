@@ -27,12 +27,7 @@ export const TransitIcon = (props: {
   transitTypes.set(
     0,
     <Box
-      style={{ padding: 3 }}
-      sx={(theme) => ({
-        boxShadow: theme.shadows.xl,
-        "&:hover": {
-          boxShadow: theme.shadows.lg,
-        },
+      sx={() => ({
         ...props.containerStyle,
       })}
       onClick={props.onClick}
@@ -43,11 +38,8 @@ export const TransitIcon = (props: {
   transitTypes.set(
     1,
     <Box
-      style={{ padding: 3 }}
-      sx={(theme) => ({
-        hover: { boxShadow: theme.shadows.xl },
+      sx={() => ({
         "&:hover": {
-          boxShadow: theme.shadows.lg,
           backgroundColor: props?.containerStyle?.backgroundColor,
         },
         ...props.containerStyle,
@@ -64,12 +56,7 @@ export const TransitIcon = (props: {
   transitTypes.set(
     2,
     <Box
-      style={{ padding: 3 }}
-      sx={(theme) => ({
-        boxShadow: theme.shadows.xl,
-        "&:hover": {
-          boxShadow: theme.shadows.lg,
-        },
+      sx={() => ({
         ...props.containerStyle,
       })}
       onClick={props.onClick}
@@ -84,12 +71,7 @@ export const TransitIcon = (props: {
   transitTypes.set(
     3,
     <Box
-      style={{ padding: 3 }}
-      sx={(theme) => ({
-        boxShadow: theme.shadows.xl,
-        "&:hover": {
-          boxShadow: theme.shadows.lg,
-        },
+      sx={() => ({
         ...props.containerStyle,
       })}
       onClick={props.onClick}
@@ -104,12 +86,7 @@ export const TransitIcon = (props: {
   transitTypes.set(
     4,
     <Box
-      style={{ padding: 3 }}
-      sx={(theme) => ({
-        boxShadow: theme.shadows.xl,
-        "&:hover": {
-          boxShadow: theme.shadows.lg,
-        },
+      sx={() => ({
         ...props.containerStyle,
       })}
       onClick={props.onClick}
@@ -176,7 +153,7 @@ const LiveMarker = (props: {
       >
         <Link
           to={{
-            pathname: `/${props?.route?.attributes?.type}/${props?.route?.id}/${props.vehicle.id}`,
+            pathname: `/${props?.route?.attributes?.type}/${props?.route?.id}/${props.vehicle.id}/${props.vehicle?.relationships?.trip?.data?.id}`,
             state: { route: props.route, vehicle: vehicle },
           }}
         >
