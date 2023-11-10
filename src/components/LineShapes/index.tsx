@@ -54,7 +54,7 @@ const Line = (props: { polyline: any }) => {
           id={`line-${props.polyline?.id}`}
           type="line"
           paint={{
-            "line-width": 3,
+            "line-width": 1.5,
             "line-color": `#${getShapesColors(
               location?.state?.route?.attributes?.color
             )}`,
@@ -77,6 +77,7 @@ export const LineShapes = (props: {
   vehicleType: string;
   dataRoutes: any;
   checked: boolean;
+  setLinesVisible(v: boolean): void;
 }) => {
   const params: { transit_type: string; route_id: string; transit_id: string } =
     useParams();
@@ -119,6 +120,16 @@ export const LineShapes = (props: {
       parsedShapes?.map((shape: any) => [shape.length, shape])
     ).values(),
   ];
+
+  React.useLayoutEffect(() => {
+    console.log(params.transit_type);
+    if(params.transit_type === "3"){
+      return props.setLinesVisible(false);
+    }
+    else{
+      return props.setLinesVisible(true);
+    }
+  }, [params.transit_type])
 
   const memorizedShapes = React.useMemo(() => {
     if (isLoading) {

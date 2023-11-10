@@ -127,10 +127,12 @@ const LiveMarker = (props: {
       }
     });
 
-    // return function cleanUp() {
-    //   socket.disconnect();
-    // };
+    return function cleanup() {
+      socket.disconnect();
+    };
   }, [params.transit_type, props.vehicle.id]);
+
+  console.log({route: props.route, vehicle: props.vehicle})
 
   const memorizedMarker = useMemo(() => {
     return (
@@ -140,7 +142,6 @@ const LiveMarker = (props: {
         anchor="bottom"
         style={{
           willChange: "transform",
-          // @ts-ignore
           transition: isAnimating && "transform 100ms ease-in-out",
         }}
         onClick={(event: any) => {

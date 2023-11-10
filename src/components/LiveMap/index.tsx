@@ -29,6 +29,7 @@ const MapContent = (props: {
   linesVisible: boolean;
   setLineDrawerIsOpen(v: boolean): void;
   lineDrawerIsOpen: boolean;
+  setLinesVisible(v: boolean): void;
 }) => {
   const params: {
     transit_type: string;
@@ -122,6 +123,7 @@ const MapContent = (props: {
         setLineRoute={setLineRoute}
         dataRoutes={dataRoutes}
         checked={props.linesVisible}
+        setLinesVisible={props.setLinesVisible}
       />
       <LineStops />
       {allVehicles.map((vehicle: any) => {
@@ -196,6 +198,7 @@ export const LiveMap = () => {
           lineDrawerIsOpen={lineDrawerIsOpen}
           onMove={onMove}
           linesVisible={linesVisible}
+          setLinesVisible={setLinesVisible}
         />
       </Map>
       <Coffee />
