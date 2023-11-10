@@ -215,7 +215,7 @@ export const LineDrawer = (props: {
                 zoom: 12,
               });
             }
-            history.push(`/`);
+            history.push(`/${params.transit_type}`);
             props.setLineDrawerIsOpen(false);
           }}
         />
