@@ -132,8 +132,6 @@ const LiveMarker = (props: {
     };
   }, [params.transit_type, props.vehicle.id]);
 
-  console.log({route: props.route, vehicle: props.vehicle})
-
   const memorizedMarker = useMemo(() => {
     return (
       <Marker

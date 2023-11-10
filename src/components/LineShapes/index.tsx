@@ -122,7 +122,6 @@ export const LineShapes = (props: {
   ];
 
   React.useLayoutEffect(() => {
-    console.log(params.transit_type);
     if(params.transit_type === "3"){
       return props.setLinesVisible(false);
     }
