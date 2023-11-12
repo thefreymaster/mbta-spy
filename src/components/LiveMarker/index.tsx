@@ -127,9 +127,9 @@ const LiveMarker = (props: {
       }
     });
 
-    return function cleanup() {
-      socket.disconnect();
-    };
+    // return function cleanup() {
+    //   socket.disconnect();
+    // };
   }, [params.transit_type, props.vehicle.id]);
 
   const memorizedMarker = useMemo(() => {
