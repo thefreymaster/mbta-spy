@@ -43,6 +43,7 @@ export const TransitTitle = (props: {
             onClick={props.onClick}
           />
         </Box>
+        <Box sx={{ flex: 1 }} />
         <Title
           sx={() => ({
             marginLeft: 5,
@@ -55,6 +56,7 @@ export const TransitTitle = (props: {
         >
           {props.description}
         </Title>
+        <Box sx={{ flex: 1 }} />
         <Title
           sx={(theme) => ({
             minWidth: "40px",

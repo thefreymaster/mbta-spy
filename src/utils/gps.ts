@@ -42,8 +42,6 @@ export const getLiveGPSCoordinates = (
     (position) => {
       const { latitude, longitude } = position.coords;
 
-      console.log({ latitude, longitude });
-
       setUserLocation({ latitude, longitude });
       getLiveGPSCoordinates(setUserLocation);
     },
