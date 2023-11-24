@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useQuery } from "react-query";
 import Map, { MapRef } from "react-map-gl";
 import mapboxgl from "mapbox-gl";
@@ -17,6 +17,9 @@ import { LinesToggle } from "../LinesToggle";
 import { DarkModeToggle } from "../../common/DarkModeToggle";
 import { getVehicle } from "../../utils/getVehicle";
 import Coffee from "../Coffee";
+import { getLiveGPSCoordinates } from "../../utils/gps";
+import { LiveUserLocation } from "../LiveUserLocation";
+import { CenterMapToggle } from "../../common/CenterMapToggle";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAP_BOX_TOKEN || "";
 
@@ -30,6 +33,10 @@ const MapContent = (props: {
   setLineDrawerIsOpen(v: boolean): void;
   lineDrawerIsOpen: boolean;
   setLinesVisible(v: boolean): void;
+  userLocation: {
+    latitude: number;
+    longitude: number;
+  };
 }) => {
   const params: {
     transit_type: string;
@@ -37,15 +44,10 @@ const MapContent = (props: {
     transit_id: string;
     trip_id: string;
   } = useParams();
-  const [lineRoute, setLineRoute]: any = React.useState();
-  const [vehicleType, setVehicleType] = React.useState("");
+  const [lineRoute, setLineRoute]: any = useState();
+  const [vehicleType, setVehicleType] = useState("");
 
-  const {
-    isLoading,
-    isError,
-    error,
-    data,
-  } = useQuery(
+  const { isLoading, isError, error, data } = useQuery(
     ["vehicles", params?.transit_type],
     () =>
       fetch(
@@ -126,6 +128,10 @@ const MapContent = (props: {
         setLinesVisible={props.setLinesVisible}
       />
       <LineStops />
+      <LiveUserLocation
+        latitude={props.userLocation.latitude}
+        longitude={props.userLocation.longitude}
+      />
       {allVehicles.map((vehicle: any) => {
         return (
           <div key={`marker-${vehicle.id}`}>
@@ -157,6 +163,14 @@ export const LiveMap = () => {
 
   const [linesVisible, setLinesVisible]: any = React.useState(true);
   const [lineDrawerIsOpen, setLineDrawerIsOpen]: any = React.useState(false);
+  const [userLocation, setUserLocation] = useState({
+    longitude: 0,
+    latitude: 0,
+  });
+
+  React.useEffect(() => {
+    getLiveGPSCoordinates(setUserLocation);
+  }, []);
 
   const onMove = (event: {
     longitude: number;
@@ -170,6 +184,17 @@ export const LiveMap = () => {
     });
   };
 
+  const handleOnMoveToCenter = () => {
+    if (userLocation.longitude === 0 || userLocation.latitude === 0) {
+      return null;
+    }
+    return onMove({
+      longitude: userLocation.longitude,
+      latitude: userLocation.latitude,
+      zoom: 13,
+    });
+  };
+
   return (
     <div className="map-container">
       <VehicleTypeToggle />
@@ -178,6 +203,7 @@ export const LiveMap = () => {
         linesVisible={linesVisible}
       />
       <DarkModeToggle />
+      <CenterMapToggle handleOnMoveToCenter={handleOnMoveToCenter} />
       <Map
         ref={mapRef}
         initialViewState={{
@@ -199,6 +225,7 @@ export const LiveMap = () => {
           onMove={onMove}
           linesVisible={linesVisible}
           setLinesVisible={setLinesVisible}
+          userLocation={userLocation}
         />
       </Map>
       <Coffee />
