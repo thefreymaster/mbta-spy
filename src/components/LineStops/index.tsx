@@ -48,7 +48,7 @@ export const Stop = (props: { id: string; stop: any }) => {
               location?.state?.route?.attributes?.color
             )}`,
             "circle-radius": 6,
-            "circle-stroke-color": colorScheme === "dark" ? "white" : "black",
+            "circle-stroke-color": colorScheme === "dark" ? "white" : "white",
             "circle-stroke-width": 2,
           }}
         />
@@ -67,7 +67,7 @@ export const LineStops = () => {
     return (
       <>
         {data?.stops.map((stop: any) => {
-          return <Stop stop={stop} id={stop.id} />;
+          return <Stop key={stop.id} stop={stop} id={stop.id} />;
         })}
       </>
     );
