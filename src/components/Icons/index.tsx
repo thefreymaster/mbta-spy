@@ -3,15 +3,15 @@ import "./icon.css";
 
 const style = {
   borderRadius: "0px 100px 100px 100px",
-  minWidth: 12,
-  minHeight: 12,
+  minWidth: 16,
+  minHeight: 16,
+  border: "2px solid white",
   padding: 2,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  boxShadow:
-    "0 20px 25px -5px rgba(0, 0, 0, 0.1),0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-  border: "1px solid black",
+  // boxShadow:
+  //   "0 20px 25px -5px rgba(0, 0, 0, 0.1),0 10px 10px -5px rgba(0, 0, 0, 0.04)",
 };
 
 interface ITransitIcon {
