@@ -185,7 +185,10 @@ export const LiveMap = () => {
   };
 
   const handleOnMoveToCenter = () => {
-    onMove({
+    if (userLocation.longitude === 0 || userLocation.latitude === 0) {
+      return null;
+    }
+    return onMove({
       longitude: userLocation.longitude,
       latitude: userLocation.latitude,
       zoom: 13,
