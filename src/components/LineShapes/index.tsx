@@ -54,7 +54,7 @@ const Line = (props: { polyline: any }) => {
           id={`line-${props.polyline?.id}`}
           type="line"
           paint={{
-            "line-width": 2,
+            "line-width": 1.5,
             "line-color": `#${getShapesColors(
               location?.state?.route?.attributes?.color
             )}`,
@@ -97,7 +97,9 @@ export const LineShapes = (props: {
   const { isLoading, data } = useQuery(
     ["line-polyline", params.transit_type + params.route_id],
     () =>
-      fetch(`/api/shapes/${renderLines && getShapesId()}`).then((res) => res.json()),
+      fetch(`/api/shapes/${renderLines && getShapesId()}`).then((res) => {
+        return res.json();
+      }),
     {
       enabled: renderLines,
       retry: false,
