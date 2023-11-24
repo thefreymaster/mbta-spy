@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useQuery } from "react-query";
 import Map, { MapRef } from "react-map-gl";
 import mapboxgl from "mapbox-gl";
@@ -15,8 +15,8 @@ import "./live-map.css";
 import { LineStops } from "../LineStops";
 import { LinesToggle } from "../LinesToggle";
 import { DarkModeToggle } from "../../common/DarkModeToggle";
-import { getVehicle } from "../../utils/getVehicle";
 import Coffee from "../Coffee";
+import { getLiveGPSCoordinates } from "../../utils/gps";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAP_BOX_TOKEN || "";
 
@@ -157,6 +157,14 @@ export const LiveMap = () => {
 
   const [linesVisible, setLinesVisible]: any = React.useState(true);
   const [lineDrawerIsOpen, setLineDrawerIsOpen]: any = React.useState(false);
+  const [userLocation, setUserLocation] = useState({
+    longitude: 0,
+    latitude: 0,
+  });
+
+  React.useEffect(() => {
+    getLiveGPSCoordinates(setUserLocation);
+  }, []);
 
   const onMove = (event: {
     longitude: number;
