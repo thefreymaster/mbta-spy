@@ -9,8 +9,8 @@ import {
 } from "react-icons/md";
 import "./live-marker.css";
 import { Box } from "@mantine/core";
-import { Route, Vehicle } from "../../interfaces";
-import { Link, useParams } from "react-router-dom";
+import { Route } from "../../interfaces";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { TransitIcons } from "../Icons/index";
 import { IoTrain } from "react-icons/io5";
 
@@ -30,7 +30,6 @@ export const TransitIcon = (props: {
       sx={() => ({
         ...props.containerStyle,
       })}
-      className="marker"
       onClick={props.onClick}
     >
       <MdTram color={props.color ?? "white"} style={{ ...props.style }} />
@@ -104,17 +103,20 @@ export const TransitIcon = (props: {
 };
 
 const LiveMarker = (props: {
-  vehicle: Vehicle;
+  vehicle: any;
   route: Route;
-  setLineRoute(s: Route): void;
+  setLineRoute(s: any): void;
   onMove(event: any): void;
 }) => {
+  const { current: map } = useMap();
+  const history = useHistory();
+
   const [vehicle, setVehicle] = React.useState(props.vehicle);
-  const [isAnimating, setIsAnimating] = React.useState(false);
+  const [isAnimating, setIsAnimating]: any = React.useState(false);
   const params: { transit_type: string } = useParams();
 
   React.useEffect(() => {
-    socket.on(props.vehicle.id, ({ data }: { data: string }) => {
+    socket.on(props.vehicle.id, ({ data }: { data: any }) => {
       const parsed = JSON.parse(data);
       if (parsed.id === props.vehicle.id) {
         setVehicle(parsed);
@@ -124,6 +126,10 @@ const LiveMarker = (props: {
         }, 100);
       }
     });
+
+    return function cleanup() {
+      socket.disconnect();
+    };
   }, [params.transit_type, props.vehicle.id]);
 
   const memorizedMarker = useMemo(() => {
@@ -134,9 +140,9 @@ const LiveMarker = (props: {
         anchor="bottom"
         style={{
           willChange: "transform",
-          // transition: `transform ${isAnimating ? '0ms' : '100ms'} ease-in-out`,
+          transition: isAnimating && "transform 100ms ease-in-out",
         }}
-        onClick={() => {
+        onClick={(event: any) => {
           props.onMove({
             longitude: vehicle.attributes.longitude,
             latitude: vehicle.attributes.latitude,
@@ -144,25 +150,21 @@ const LiveMarker = (props: {
           });
         }}
       >
-        <div className="marker-parent">
-          <Link
-            to={{
-              pathname: `/${props?.route?.attributes?.type}/${props?.route?.id}/${props.vehicle.id}/${props.vehicle?.relationships?.trip?.data?.id}`,
-              state: { route: props.route, vehicle: vehicle },
-            }}
-          >
-            <TransitIcons
-              type={props.route?.attributes?.type}
-              backgroundColor={props.route?.attributes?.color}
-              transform={`rotate(${
-                props.vehicle?.attributes?.bearing + 45
-              }deg)`}
-              svgTransform={`rotate(${
-                (props.vehicle?.attributes?.bearing + 45) * -1
-              }deg)`}
-            />
-          </Link>
-        </div>
+        <Link
+          to={{
+            pathname: `/${props?.route?.attributes?.type}/${props?.route?.id}/${props.vehicle.id}/${props.vehicle?.relationships?.trip?.data?.id}`,
+            state: { route: props.route, vehicle: vehicle },
+          }}
+        >
+          <TransitIcons
+            type={props.route?.attributes?.type}
+            backgroundColor={props.route?.attributes?.color}
+            transform={`rotate(${props.vehicle?.attributes?.bearing + 45}deg)`}
+            svgTransform={`rotate(${
+              (props.vehicle?.attributes?.bearing + 45) * -1
+            }deg)`}
+          />
+        </Link>
       </Marker>
     );
   }, [vehicle.attributes.longitude, vehicle.attributes.latitude, isAnimating]);
