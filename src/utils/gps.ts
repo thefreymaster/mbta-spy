@@ -14,9 +14,7 @@ export const getGPSCoordinates = (
   navigator.geolocation.getCurrentPosition(
     (position) => {
       const { latitude, longitude } = position.coords;
-
       setUserLocation({ latitude, longitude });
-      getLiveGPSCoordinates(setUserLocation);
     },
     (e) => {
       console.log(e);
@@ -41,13 +39,9 @@ export const getLiveGPSCoordinates = (
   navigator.geolocation.watchPosition(
     (position) => {
       const { latitude, longitude } = position.coords;
-
       setUserLocation({ latitude, longitude });
-      getLiveGPSCoordinates(setUserLocation);
     },
-    (e) => {
-      console.log(e);
-    },
+    (e) => console.log(e),
     options
   );
 };

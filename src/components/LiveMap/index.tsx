@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import Map, { MapRef } from "react-map-gl";
 import mapboxgl from "mapbox-gl";
@@ -168,9 +168,7 @@ export const LiveMap = () => {
     latitude: 0,
   });
 
-  React.useEffect(() => {
-    getLiveGPSCoordinates(setUserLocation);
-  }, []);
+  useEffect(() => getLiveGPSCoordinates(setUserLocation), []);
 
   const onMove = (event: {
     longitude: number;

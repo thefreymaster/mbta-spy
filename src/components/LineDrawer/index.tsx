@@ -313,6 +313,7 @@ export const LineDrawer = (props: {
                     predictions={predictionsData?.combined}
                   />
                 }
+                key={stop?.attributes?.name}
                 bullet={
                   <ThemeIcon
                     size={16}
