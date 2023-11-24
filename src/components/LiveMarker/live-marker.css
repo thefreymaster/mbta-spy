@@ -1,3 +1,21 @@
 .marker:hover {
-    cursor: pointer;
+  cursor: pointer;
+}
+
+.marker {
+  box-sizing: border-box;
+  will-change: animation;
+  z-index: 2 !important;
+}
+
+.marker-parent {
+  width: 16px;
+  height: 16px;
+  border-radius: 100px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  will-change: animation;
+  z-index: 2 !important;
 }
