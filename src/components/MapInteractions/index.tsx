@@ -25,6 +25,7 @@ const Container = ({
         zIndex: 100,
         boxShadow: BOX_SHADOW,
         backgroundColor,
+        backdropFilter: "blur(4px)",
         padding: "5px",
         borderRadius: "15px 100px 100px 100px",
         ...position,

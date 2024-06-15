@@ -1,3 +1,5 @@
+import { BRIGHT_BACKGROUND_COLOR, DARK_BACKGROUND_COLOR } from "../constants/styles";
+
 export const getNavigationBackgroundColor = ({
   colorScheme,
   colors,
@@ -6,9 +8,9 @@ export const getNavigationBackgroundColor = ({
   colors: any;
 }) => {
   if (colorScheme === "dark") {
-    return colors.gray[9];
+    return DARK_BACKGROUND_COLOR;
   }
-  return colors.gray[4];
+  return BRIGHT_BACKGROUND_COLOR;
 };
 
 export const getNavigationButtonBackgroundColor = ({
@@ -59,12 +61,8 @@ export const getBackgroundColor = ({
 }) => {
   if (active) {
     if (colorScheme === "dark") {
-      return theme.colors.gray[8];
+      return theme.colors.dark[9];
     }
     return theme.white;
   }
-  if (colorScheme === "dark") {
-    return theme.colors.gray[9];
-  }
-  return theme.colors.gray[4];
 };

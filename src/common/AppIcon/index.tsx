@@ -11,9 +11,9 @@ export const AppIcon = () => {
         padding: 3,
         margin: 5,
         backgroundColor:
-          colorScheme === "dark" ? theme.colors.gray[9] : theme.colors.gray[1],
+          colorScheme === "dark" ? theme.colors.dark[9] : theme.colors.gray[3],
         color:
-          colorScheme === "dark" ? theme.colors.gray[1] : theme.colors.gray[9],
+          colorScheme === "dark" ? theme.colors.gray[0] : theme.colors.gray[9],
       })}
       size="lg"
     >

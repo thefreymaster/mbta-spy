@@ -31,7 +31,7 @@ export const DrawerTitle = ({
       <Box
         display="flex"
         sx={{
-          minWidth: isMobile ? "calc(100vw - 150px)" : "auto",
+          minWidth: isMobile ? "calc(100vw - 150px)" : "calc(100% - 36px)",
         }}
       >
         <TransitTitle
@@ -44,10 +44,9 @@ export const DrawerTitle = ({
               : location?.state?.route?.attributes?.short_name
           }
           onClick={handleClickHeader}
-          minWidth="85%"
+          minWidth="calc(100% - 36px)"
         />
       </Box>
-      <Box sx={{ flex: 1 }} />
       {isMobile && (
         <>
           <ActionIcon

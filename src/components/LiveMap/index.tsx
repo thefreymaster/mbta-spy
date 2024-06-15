@@ -15,11 +15,13 @@ import "./live-map.css";
 import { LineStops } from "../LineStops";
 import { LinesToggle } from "../LinesToggle";
 import { DarkModeToggle } from "../../common/DarkModeToggle";
-import { getVehicle } from "../../utils/getVehicle";
+// import { getVehicle } from "../../utils/getVehicle";
 import Coffee from "../Coffee";
 import { getLiveGPSCoordinates } from "../../utils/gps";
 import { LiveUserLocation } from "../LiveUserLocation";
 import { CenterMapToggle } from "../../common/CenterMapToggle";
+import { useQueries } from "../../hooks/useQueries";
+// import StatusBar from "../../common/StatusBar";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAP_BOX_TOKEN || "";
 
@@ -159,6 +161,9 @@ export const LiveMap = () => {
     trip_id: string;
   } = useParams();
 
+  const query = useQueries();
+  const embeded = query.get("embeded");
+
   const { colorScheme } = useMantineColorScheme();
 
   const [linesVisible, setLinesVisible]: any = React.useState(true);
@@ -195,13 +200,17 @@ export const LiveMap = () => {
 
   return (
     <div className="map-container">
-      <VehicleTypeToggle />
-      <LinesToggle
-        setLinesVisible={setLinesVisible}
-        linesVisible={linesVisible}
-      />
-      <DarkModeToggle />
-      <CenterMapToggle handleOnMoveToCenter={handleOnMoveToCenter} />
+      {!embeded && (
+        <>
+          <VehicleTypeToggle />
+          <LinesToggle
+            setLinesVisible={setLinesVisible}
+            linesVisible={linesVisible}
+          />
+          <DarkModeToggle />
+          <CenterMapToggle handleOnMoveToCenter={handleOnMoveToCenter} />
+        </>
+      )}
       <Map
         ref={mapRef}
         initialViewState={{
@@ -227,6 +236,7 @@ export const LiveMap = () => {
         />
       </Map>
       <Coffee />
+      {/* <StatusBar /> */}
     </div>
   );
 };

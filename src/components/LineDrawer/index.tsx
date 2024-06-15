@@ -21,6 +21,11 @@ import { getBackgroundColor } from "../../utils/getColors";
 import { LineAttributes } from "../LineAttributes";
 import { getVehicle } from "../../utils/getVehicle";
 import { Schedule } from "../Schedule";
+import {
+  BRIGHT_BACKGROUND_COLOR,
+  DARK_BACKGROUND_COLOR,
+} from "../../constants/styles";
+import { getBlur } from "../../utils/getBlur";
 
 const StopTitle = ({
   name,
@@ -232,21 +237,23 @@ export const LineDrawer = (props: {
           margin: isMobile ? "0px" : "20px",
           backgroundColor:
             colorScheme === "dark"
-              ? theme.colors.gray[9]
-              : theme.colors.gray[2],
+              ? DARK_BACKGROUND_COLOR
+              : BRIGHT_BACKGROUND_COLOR,
         },
         header: {
           padding: "18px",
+          marginBottom: "0px",
           position: "sticky",
           top: "0px",
           zIndex: 100,
-          backgroundColor: getBackgroundColor({
-            theme,
-            active: true,
-            colorScheme,
-          }),
+          backgroundColor:
+            colorScheme === "dark"
+              ? DARK_BACKGROUND_COLOR
+              : BRIGHT_BACKGROUND_COLOR,
+
           boxShadow:
             "0 1px 3px rgb(0 0 0 / 5%), rgb(0 0 0 / 5%) 0px 20px 25px -5px, rgb(0 0 0 / 4%) 0px 10px 10px -5px",
+          backdropFilter: getBlur(10),
         },
         title: {
           marginRight: "0px",
@@ -255,14 +262,16 @@ export const LineDrawer = (props: {
         body: {
           backgroundColor:
             colorScheme === "dark"
-              ? theme.colors.gray[9]
-              : theme.colors.gray[2],
+              ? DARK_BACKGROUND_COLOR
+              : BRIGHT_BACKGROUND_COLOR,
+          backdropFilter: getBlur(10),
+          padding: "18px 1px",
         },
         overlay: {
           backgroundColor:
             colorScheme === "dark"
-              ? theme.colors.gray[9]
-              : theme.colors.gray[2],
+              ? DARK_BACKGROUND_COLOR
+              : BRIGHT_BACKGROUND_COLOR,
         },
         closeButton: {
           color: "red",
