@@ -1,0 +1,1 @@
+export const getBlur = (px: number) => `blur(${px}px)`;
