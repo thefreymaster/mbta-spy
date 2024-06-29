@@ -21,6 +21,7 @@ import { getLiveGPSCoordinates } from "../../utils/gps";
 import { LiveUserLocation } from "../LiveUserLocation";
 import { CenterMapToggle } from "../../common/CenterMapToggle";
 import { useQueries } from "../../hooks/useQueries";
+import { SettingsDrawer } from "../SettingsDrawer";
 // import StatusBar from "../../common/StatusBar";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAP_BOX_TOKEN || "";
@@ -202,6 +203,7 @@ export const LiveMap = () => {
     <div className="map-container">
       {!embeded && (
         <>
+          <SettingsDrawer />
           <VehicleTypeToggle />
           <LinesToggle
             setLinesVisible={setLinesVisible}

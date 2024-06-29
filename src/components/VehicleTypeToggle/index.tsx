@@ -132,7 +132,7 @@ const NavIcon = ({
 export const VehicleTypeToggle = () => {
   const position = isMobile
     ? {
-        bottom: 20,
+        bottom: 30,
         left:"calc(50% - 110px)",
         zIndex: 100,
         display: 'flex'

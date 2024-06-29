@@ -9,7 +9,7 @@ import {
   getNavigationBackgroundColor,
 } from "../../utils/getColors";
 import MapInteractions from "../../components/MapInteractions";
-import { IoMoonSharp, IoSunnyOutline } from "react-icons/io5";
+import { IoMoon, IoSunny } from "react-icons/io5";
 
 export const DarkModeToggle = () => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -17,7 +17,7 @@ export const DarkModeToggle = () => {
 
   const position = isMobile
     ? {
-        bottom: 20,
+        bottom: 30,
         right: 20,
       }
     : { top: 420, left: 20 };
@@ -44,7 +44,7 @@ export const DarkModeToggle = () => {
         })}
         active={colorScheme === "light"}
       >
-        <IoSunnyOutline />
+        <IoSunny />
       </MapInteractions.Button>
       <Box mb="xs" />
       <MapInteractions.Button
@@ -61,7 +61,7 @@ export const DarkModeToggle = () => {
         })}
         active={colorScheme === "dark"}
       >
-        <IoMoonSharp />
+        <IoMoon />
       </MapInteractions.Button>
     </MapInteractions.Container>
   );
