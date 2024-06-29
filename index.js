@@ -88,7 +88,7 @@ app.get("/api/predictions/:route_id/:trip_id", async (req, res) => {
     `https://api-v3.mbta.com/predictions?include=stop&filter%5Broute%5D=${route_id}&filter%5Btrip%5D=${trip_id}&api_key=${process.env.MBTA_TOKEN}`
   );
   const predictions = response.data;
-  const included = response.data.included.reverse();
+  const included = response?.data?.included?.reverse();
 
   const newPredictions = predictions.data.reduce(
     (collector, prediction, index) => {

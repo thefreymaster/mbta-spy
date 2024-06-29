@@ -13,7 +13,7 @@ transitTypeColors.set("3", "ffc72c");
 const getCoordinates = (polyline: string) => {
   const parsedPolyline = decode(polyline);
   const newParsedPolyline = parsedPolyline.map((coor: number[]) =>
-    coor.reverse()
+    coor?.reverse()
   );
   return newParsedPolyline;
 };

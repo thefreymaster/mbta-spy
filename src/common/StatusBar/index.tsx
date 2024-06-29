@@ -17,11 +17,10 @@ const StatusBar = () => {
     font-size: 12px;
     font-weight: bold;
     font-family: "Sofia Sans", sans-serif;
-    position: fixed;
     bottom: 0px;
-    width: 100vw;
+    width: 100%;
     z-index: 1000;
-    backdrop-filter: ${getBlur(10)}
+    backdrop-filter: ${getBlur(4)}
   `;
 
   return (
@@ -38,7 +37,7 @@ const StatusBar = () => {
               : theme.colors.gray[8],
         })}
       >
-        MBTA Spy {packageJson.version}
+        MBTA Spy v{packageJson.version}
       </Text>
     </Style>
   );
