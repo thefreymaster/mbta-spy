@@ -10,6 +10,7 @@ import { BrowserTracing } from "@sentry/tracing";
 
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import Zindex from "./common/Zindex";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -40,7 +41,9 @@ const container = document.getElementById("root");
 const root = createRoot(container!); // createRoot(container!) if you use TypeScript
 root.render(
   <RouterProvider>
-    <App />
+    <Zindex zIndex={1}>
+      <App />
+    </Zindex>
   </RouterProvider>
 );
 

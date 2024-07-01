@@ -4,7 +4,7 @@ import {
   MdTram,
   MdDirectionsSubway,
   MdDirectionsRailway,
-  MdOutlineDirectionsBus,
+  MdDirectionsBus,
   MdPublic,
 } from "react-icons/md";
 import { useHistory, useParams } from "react-router-dom";
@@ -46,7 +46,7 @@ const data = [
     label: "Bus",
     value: "3",
     route: "bus",
-    icon: <MdOutlineDirectionsBus />,
+    icon: <MdDirectionsBus />,
   },
 ];
 
