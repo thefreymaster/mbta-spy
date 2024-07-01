@@ -224,8 +224,8 @@ export const LiveMap = () => {
         style={{ width: "100vw", height: "100vh" }}
         mapStyle={
           colorScheme === "dark"
-            ? "mapbox://styles/thefreymaster/ckz4a2i2m000r16pquoggwnqp"
-            : "mapbox://styles/thefreymaster/cle3mr5kl001v01muelgj6hgg"
+            ? "mapbox://styles/thefreymaster/cly378i1q00e701qoguhe11td"
+            : "mapbox://styles/thefreymaster/cly3751sc00ef01nz0fspbyx9"
         }
       >
         <MapContent
